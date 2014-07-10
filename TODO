@@ -1,0 +1,5 @@
+- content type encap
+- post contents
+- get vars
+- uri parsing
+- little controller system
