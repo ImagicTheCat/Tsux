@@ -11,7 +11,7 @@ class Tsux{
     bool accept();
     void flush();
 
-    std::string& param(const std::string p);
+    std::string param(const std::string& p);
 
     std::ostream out;
     std::istream in;

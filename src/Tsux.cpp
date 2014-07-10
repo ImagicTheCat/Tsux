@@ -55,5 +55,10 @@ void Tsux::flush(){
 }
 
 
-std::string& Tsux::param(const std::string p){
+std::string Tsux::param(const std::string& p){
+  char* str = FCGX_GetParam(p.c_str(), request.envp);
+  if(str != NULL)
+    return std::string(str);
+  else
+    return "";
 }
