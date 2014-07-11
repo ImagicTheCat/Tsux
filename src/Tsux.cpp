@@ -10,7 +10,7 @@ Tsux::Tsux():in(std::cin.rdbuf()),
 }
 
 Tsux::~Tsux(){
-  flush();
+  end();
 }
 
 void Tsux::initBufs(){
@@ -34,10 +34,39 @@ bool Tsux::accept(){
   bool ok = FCGX_Accept_r(&request) == 0;
   initBufs();
 
+  //init vars
+  post.clear();
+  get.clear();
+  response.clear();
+  response.str("");
+
+  //build location and get
+  _url = param("REQUEST_URI");
+  size_t sp1 = _url.find("?");
+
+  _location = _url.substr(0, sp1);
+
+  //gets vars
+  if(sp1 != std::string::npos){
+    std::string gets = _url.substr(sp1+1);
+    parseURLCouples(gets, get);
+  }
+
   return ok;
 }
 
-void Tsux::flush(){
+void Tsux::end(){
+  //inject headers
+  std::map<std::string, std::string>::iterator it = header.getParams().begin();
+  while(it != header.getParams().end()){
+    out << it->first << ": " << it->second << "\r\n";
+    it++;
+  }
+  out << "\r\n";
+
+  //inject response
+  out << response.str();
+
   if(sin != NULL)
     delete sin;
   if(sout != NULL)
@@ -54,6 +83,52 @@ void Tsux::flush(){
   err.rdbuf(std::cerr.rdbuf());
 }
 
+void Tsux::parseURLCouples(const std::string& url, ParamSet& pset){
+  std::string tmp;
+  std::string name;
+  bool mode = true;
+
+  //parse couples
+  for(int i = 0; i < url.size(); i++){
+    char c = url[i];
+    bool end = (i == url.size()-1);
+
+    //var name
+    if(mode){
+      if(c == '='){
+        if(end)
+          pset.set(tmp, "");
+
+        name = tmp;
+        mode = !mode;
+        tmp = "";
+      }
+      else if(c == '&'){
+        tmp = "";
+        pset.set(tmp, "");
+      }
+      else if(end){
+        tmp += c;
+        pset.set(tmp, "");
+      }
+      else
+        tmp += c;
+    }
+    else{
+      if(c == '&' || end){
+        if(end)
+          tmp += c;
+
+        pset.set(name, tmp);
+        tmp = "";
+        name = "";
+        mode = !mode;
+      }
+      else
+        tmp += c;
+    }
+  }
+}
 
 std::string Tsux::param(const std::string& p){
   char* str = FCGX_GetParam(p.c_str(), request.envp);

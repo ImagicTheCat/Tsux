@@ -5,14 +5,29 @@ int main(int argc, char** argv){
   Tsux tsux;
 
   while(tsux.accept()){
-    tsux.out << "Content-type: text/html\r\n";
-    tsux.out << "\r\n";
-    tsux.out << "<h1>Hello world</h1>\n";
-    tsux.out << "<p>Your ip is <strong>" << tsux.param("REMOTE_ADDR") << "</strong></p>";
-    tsux.out << "<p>The URI is <strong>" << tsux.param("REQUEST_URI") << "</strong></p>";
-    tsux.out << "<p>Nothin is <strong>" << tsux.param("nothing") << "</strong></p>";
+    tsux.header.set("Content-type", "text/html");
 
-    tsux.flush();
+    tsux.response << "<h1>Hello world</h1>\n";
+    tsux.response << "<p>Your ip is <strong>" << tsux.param("REMOTE_ADDR") << "</strong></p>";
+    tsux.response << "<p>The URL is <strong>" << tsux.url() << "</strong></p>";
+    tsux.response << "<p>The location is <strong>" << tsux.location() << "</strong></p>";
+    tsux.response << "<p>Nothin is <strong>" << tsux.param("nothing") << "</strong></p>";
+
+    //display get
+    std::map<std::string, std::string>::iterator it = tsux.get.getParams().begin();
+    tsux.response << "<ul>";
+    while(it != tsux.get.getParams().end()){
+      tsux.response << "<li>" << it->first << " = " << it->second << "</li>\n";
+      it++;
+    }
+    tsux.response << "</ul>";
+
+    int n = tsux.get.get("n", 0);
+    for(int i = 0; i < n; i++){
+      tsux.response << i << " ";
+    }
+
+    tsux.end();
   }
 
   return 0;
