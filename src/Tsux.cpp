@@ -55,6 +55,24 @@ bool Tsux::accept(){
   return ok;
 }
 
+
+void Tsux::bind(const std::string& path, TsuxAction action, void* data){
+  std::map<std::string, Action>::iterator it = routes.find(path);
+  if(it != routes.end())
+    routes.erase(it);
+
+  routes.insert(std::pair<std::string, Action>(path, Action(action, data)));
+}
+
+void Tsux::dispatch(){
+  //find route
+  std::map<std::string, Action>::iterator it = routes.find(_location);
+  if(it != routes.end())
+    it->second.execute(*this);
+  else
+    header.set("Status", "404 Not Found");
+}
+
 void Tsux::end(){
   //inject headers
   std::map<std::string, std::string>::iterator it = header.getParams().begin();

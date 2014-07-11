@@ -1,10 +1,7 @@
 
 #include "Tsux.hpp"
 
-int main(int argc, char** argv){
-  Tsux tsux;
-
-  while(tsux.accept()){
+void index(Tsux &tsux, void *data){
     tsux.header.set("Content-type", "text/html");
 
     tsux.response << "<h1>Hello world</h1>\n";
@@ -26,7 +23,15 @@ int main(int argc, char** argv){
     for(int i = 0; i < n; i++){
       tsux.response << i << " ";
     }
+}
 
+int main(int argc, char** argv){
+  Tsux tsux;
+
+  tsux.bind("/fcgi", index);
+
+  while(tsux.accept()){
+    tsux.dispatch();
     tsux.end();
   }
 

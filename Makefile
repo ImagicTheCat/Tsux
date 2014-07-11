@@ -1,7 +1,7 @@
 LIBS=-lfcgi -lfcgi++
 OPT=
 
-run: main.o Tsux.o ParamSet.o
+run: main.o Tsux.o ParamSet.o Action.o
 	g++ $^ -o $@ $(LIBS) $(OPT)
 
 main.o: src/main.cpp
@@ -12,3 +12,7 @@ Tsux.o: src/Tsux.cpp src/Tsux.hpp
 
 ParamSet.o: src/ParamSet.cpp src/ParamSet.hpp
 	g++ -c src/ParamSet.cpp
+
+
+Action.o: src/Action.cpp src/Action.hpp
+	g++ -c src/Action.cpp
