@@ -1,6 +1,8 @@
 
 #include "Tsux.hpp"
 
+#include <fstream>
+
 void index(Tsux &tsux, void *data){
     tsux.header.set("Content-type", "text/html");
 
@@ -25,10 +27,22 @@ void index(Tsux &tsux, void *data){
     }
 }
 
+void record(Tsux& tsux, void *data){
+  tsux.header.set("Content-type", "text/plain");
+
+  std::string& records = (std::string&)(*((std::string*)data));
+  records += tsux.get.get("msg", "nothing") + "\n";
+  
+  tsux.response << records;
+}
+
 int main(int argc, char** argv){
   Tsux tsux;
 
+  std::string records;
+
   tsux.bind("/fcgi", index);
+  tsux.bind("/fcgi/record", record, &records);
 
   while(tsux.accept()){
     tsux.dispatch();
