@@ -7,10 +7,10 @@ void index(Tsux &tsux, void *data){
     tsux.header.set("Content-type", "text/html");
 
     tsux.response << "<h1>Hello world</h1>\n";
-    tsux.response << "<p>Your ip is <strong>" << tsux.param("REMOTE_ADDR") << "</strong></p>";
+    tsux.response << "<p>Your ip is <strong>" << tsux.param.get("REMOTE_ADDR","") << "</strong></p>";
     tsux.response << "<p>The URL is <strong>" << tsux.url() << "</strong></p>";
     tsux.response << "<p>The location is <strong>" << tsux.location() << "</strong></p>";
-    tsux.response << "<p>Nothin is <strong>" << tsux.param("nothing") << "</strong></p>";
+    tsux.response << "<p>Nothin is <strong>" << tsux.param.get("nothing","") << "</strong></p>";
 
     //display get
     std::map<std::string, std::string>::iterator it = tsux.get.getParams().begin();
@@ -39,7 +39,26 @@ void record(Tsux& tsux, void *data){
 void hello(Tsux& tsux, void* data){
   tsux.header.set("Content-type", "text/plain");
 
+  if(tsux.route.get("1", "") == "")
+    tsux.header.set("Location", "http://perdu.com");
   tsux.response << "Hello " << tsux.route.get("0", "name") << " " << tsux.route.get("1", "firstname") << " ! \n";
+}
+
+void dump(Tsux& tsux, void* data){
+  tsux.header.set("Content-type", "text/plain");
+
+  tsux.response << tsux.param.get("DOCUMENT_URI","") << "\n"; 
+  tsux.response << tsux.param.get("CONTENT_TYPE","") << "\n";
+
+  int length = tsux.param.get("CONTENT_LENGTH", 0);
+  tsux.response << length << "\n" << std::endl;
+  int done = 0;
+  char buff[256];
+  while(done < length){
+    tsux.in.read(buff,256);
+    tsux.response << buff;
+    done += 256;
+  }
 }
 
 int main(int argc, char** argv){
@@ -51,7 +70,8 @@ int main(int argc, char** argv){
 
   tsux.bind("^/fcgi$", index);
   tsux.bind("^/fcgi/record$", record, &records);
-  tsux.bind("^/fcgi/hello/(.*)-(.*)$", hello);
+  tsux.bind("^/fcgi/hello/(.+)-(.+)$", hello);
+  tsux.bind("^/fcgi/dump$", dump);
 
   while(tsux.accept()){
     tsux.dispatch();

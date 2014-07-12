@@ -70,9 +70,35 @@ bool Tsux::accept(){
     response.clear();
     response.str("");
     route.clear();
+    header.clear();
+    param.clear();
+
+    //webserver params
+    for( ; *request.envp; ++request.envp){
+      std::string couple(*request.envp);
+      std::string name, value;
+      bool mode = true;
+
+      for(int i = 0; i < couple.size(); i++){
+        char c = couple[i];
+        if(mode){
+          if(c == '=')
+            mode = !mode;
+          else
+            name += c;
+        }
+        else
+          value += c;
+
+        //end
+        if(i == couple.size()-1)
+          param.set(name, value);
+      }
+    }
+
 
     //build location and get
-    _url = param("REQUEST_URI");
+    _url = param.get("REQUEST_URI","");
     size_t sp1 = _url.find("?");
 
     _location = _url.substr(0, sp1);
@@ -159,6 +185,9 @@ void Tsux::end(){
     //inject response
     out << response.str();
 
+    //ignore rest of input
+    do in.ignore(1024); while (in.gcount() == 1024);
+
     if(sin != NULL)
       delete sin;
     if(sout != NULL)
@@ -224,19 +253,11 @@ void Tsux::parseURLCouples(const std::string& url, ParamSet& pset){
   }
 }
 
-std::string Tsux::param(const std::string& p){
-  char* str = FCGX_GetParam(p.c_str(), request.envp);
-  if(str != NULL)
-    return std::string(str);
-  else
-    return "";
-}
-
 void Tsux::generate(int code){
   switch(code){
     case 404:
       header.set("Content-type", "text/html");
-      header.set("Status", "404 Not found");
+      header.set("Status", "404 Not Found");
 
       response << "<!DOCTYPE html>"
                << "<html>"

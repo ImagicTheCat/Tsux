@@ -46,7 +46,6 @@ class Tsux{
     //accessors
     const std::string& url()const{ return _url; }
     const std::string& location()const{ return _location; }
-    std::string param(const std::string& p);
 
     //streams
     std::ostream out;
@@ -55,7 +54,7 @@ class Tsux{
     std::stringstream response;
 
     //data
-    ParamSet post, get, header, route;
+    ParamSet post, get, header, route, param;
 
     //tools
     static void parseURLCouples(const std::string& url, ParamSet& pset);
