@@ -129,7 +129,11 @@ void Tsux::dispatch(){
         actions[i].execute(*this);
         done = true;
       }
+      i++;
     }
+
+    if(!done)
+      generate(404);
   }
   else{
     //simple routing
@@ -137,7 +141,7 @@ void Tsux::dispatch(){
     if(it != routes.end())
       it->second.execute(*this);
     else
-      header.set("Status", "404 Not Found");
+      generate(404);
   }
 }
 
@@ -226,4 +230,22 @@ std::string Tsux::param(const std::string& p){
     return std::string(str);
   else
     return "";
+}
+
+void Tsux::generate(int code){
+  switch(code){
+    case 404:
+      header.set("Content-type", "text/html");
+      header.set("Status", "404 Not found");
+
+      response << "<!DOCTYPE html>"
+               << "<html>"
+               << "<head><title>404 Not Found</title></head>"
+               << "<body>"
+               << "<div style=\"margin-top: 30px; text-align: center; border-bottom: 1px solid black;\">"
+               << "<h1>404 Not Found</h1>"
+               << "<p>Cruel, cruel cruel cruel.</p>"
+               << "</div></body></html>";
+    break;
+  }
 }

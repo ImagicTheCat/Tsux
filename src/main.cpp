@@ -36,6 +36,12 @@ void record(Tsux& tsux, void *data){
   tsux.response << records;
 }
 
+void hello(Tsux& tsux, void* data){
+  tsux.header.set("Content-type", "text/plain");
+
+  tsux.response << "Hello " << tsux.route.get("0", "name") << " " << tsux.route.get("1", "firstname") << " ! \n";
+}
+
 int main(int argc, char** argv){
   Tsux tsux;
 
@@ -43,8 +49,9 @@ int main(int argc, char** argv){
 
   tsux.enable(Tsux::REGEX_ROUTING);
 
-  tsux.bind("/fcgi", index);
-  tsux.bind("/fcgi/record", record, &records);
+  tsux.bind("^/fcgi$", index);
+  tsux.bind("^/fcgi/record$", record, &records);
+  tsux.bind("^/fcgi/hello/(.*)-(.*)$", hello);
 
   while(tsux.accept()){
     tsux.dispatch();

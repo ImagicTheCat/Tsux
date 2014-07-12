@@ -35,6 +35,9 @@ class Tsux{
     void bind(const std::string& path, TsuxAction action, void* data = NULL);
     void dispatch();
 
+    //404, etc
+    void generate(int code);
+
     //options methods
     void enable(unsigned int options);
     void disable(unsigned int options);
