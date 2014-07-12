@@ -15,8 +15,15 @@
 
 #include "ParamSet.hpp"
 #include "Action.hpp"
+#include "Regex.hpp"
+
 
 class Tsux{
+  //options
+  enum{
+    REGEX_ROUTING = 1
+  };
+
   public:
     Tsux();
     ~Tsux();
@@ -26,6 +33,11 @@ class Tsux{
     void end();
     void bind(const std::string& path, TsuxAction action, void* data = NULL);
     void dispatch();
+
+    //options methods
+    void enable(unsigned int options);
+    void disable(unsigned int options);
+    bool enabled(unsigned int option);
 
     //accessors
     const std::string& url()const{ return _url; }
@@ -39,7 +51,7 @@ class Tsux{
     std::stringstream response;
 
     //data
-    ParamSet post, get, header;
+    ParamSet post, get, header, route;
 
     //tools
     static void parseURLCouples(const std::string& url, ParamSet& pset);
@@ -52,7 +64,14 @@ class Tsux{
 
     std::string _url, _location;
 
+    //simple routes
     std::map<std::string, Action> routes;
+
+    //regex routes
+    std::vector<Regex> regs;
+    std::vector<Action> actions;
+
+    unsigned int options;
 };
 
 #endif

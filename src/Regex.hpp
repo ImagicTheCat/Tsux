@@ -23,6 +23,8 @@ class Regex{
     //get the matched group by order
     std::string get(int index);
 
+    std::vector<std::string>& getMatchs(){ return matchs; }
+
   private:
     regex_t regex;
     std::vector<std::string> matchs;

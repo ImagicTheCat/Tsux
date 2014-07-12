@@ -11,7 +11,8 @@
 Tsux::Tsux():in(std::cin.rdbuf()),
              out(std::cout.rdbuf()),
              err(std::cerr.rdbuf()),
-             sin(NULL),sout(NULL),serr(NULL) {
+             sin(NULL),sout(NULL),serr(NULL),
+             options(0){
   FCGX_Init();
   FCGX_InitRequest(&request, 0,0);
 }
@@ -19,6 +20,20 @@ Tsux::Tsux():in(std::cin.rdbuf()),
 Tsux::~Tsux(){
   end();
 }
+
+
+void Tsux::enable(unsigned int opts){
+  options |= opts;
+}
+
+void Tsux::disable(unsigned int opts){
+  options &= ~opts;
+}
+
+bool Tsux::enabled(unsigned int opt){
+  return (options & opt);
+}
+
 
 void Tsux::initBufs(){
   if(sin != NULL)
@@ -46,6 +61,7 @@ bool Tsux::accept(){
   get.clear();
   response.clear();
   response.str("");
+  route.clear();
 
   //build location and get
   _url = param("REQUEST_URI");
@@ -64,20 +80,56 @@ bool Tsux::accept(){
 
 
 void Tsux::bind(const std::string& path, TsuxAction action, void* data){
-  std::map<std::string, Action>::iterator it = routes.find(path);
-  if(it != routes.end())
-    routes.erase(it);
+  //regex routing
+  if(enabled(REGEX_ROUTING)){
+    Regex reg(path);
+    if(reg.isValid()){
+      regs.push_back(reg);
+      actions.push_back(Action(action, data));
+    }
+  }
+  //simple routing
+  else{
+    std::map<std::string, Action>::iterator it = routes.find(path);
+    if(it != routes.end())
+      routes.erase(it);
 
-  routes.insert(std::pair<std::string, Action>(path, Action(action, data)));
+    routes.insert(std::pair<std::string, Action>(path, Action(action, data)));
+  }
 }
 
 void Tsux::dispatch(){
   //find route
-  std::map<std::string, Action>::iterator it = routes.find(_location);
-  if(it != routes.end())
-    it->second.execute(*this);
-  else
-    header.set("Status", "404 Not Found");
+  if(enabled(REGEX_ROUTING)){
+    //regex routing
+    //match regex
+    int i = 0;
+    bool done = false;
+    while(!done && i < regs.size()){
+      if(regs[i].match(_location)){
+        //set route params
+        std::vector<std::string>& params = regs[i].getMatchs();
+        for(int j = 0; j < params.size(); j++){
+          std::stringstream ss;
+          ss << j;
+
+          route.set(ss.str(), params[j]);
+        }
+
+        //execute
+        actions[i].execute(*this);
+        done = true;
+      }
+    }
+  }
+  else{
+    //simple routing
+    std::map<std::string, Action>::iterator it = routes.find(_location);
+    if(it != routes.end())
+      it->second.execute(*this);
+    else
+      header.set("Status", "404 Not Found");
+  }
 }
 
 void Tsux::end(){
