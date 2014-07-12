@@ -1,3 +1,11 @@
+/* 
+ * Tsux
+ *
+ * writen by ImagicTheCat for Tsux
+ * https://github.com/ImagicTheCat/Tsux
+ */
+
+
 #ifndef H_TSUX
 #define H_TSUX
 

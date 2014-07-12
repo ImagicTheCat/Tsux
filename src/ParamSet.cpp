@@ -1,3 +1,10 @@
+/* 
+ * Param container with conversion of values
+ *
+ * writen by ImagicTheCat for Tsux
+ * https://github.com/ImagicTheCat/Tsux
+ */
+
 
 #include "ParamSet.hpp"
 
