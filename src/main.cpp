@@ -1,5 +1,6 @@
 
 #include "Tsux.hpp"
+#include "Regex.hpp"
 
 #include <fstream>
 
