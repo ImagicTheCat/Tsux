@@ -19,6 +19,10 @@ Tsux::Tsux():in(std::cin.rdbuf()),
 
 Tsux::~Tsux(){
   end();
+
+  //regex
+  for(int i = 0; i < regs.size(); i++)
+    delete regs[i];
 }
 
 
@@ -87,8 +91,8 @@ bool Tsux::accept(){
 void Tsux::bind(const std::string& path, TsuxAction action, void* data){
   //regex routing
   if(enabled(REGEX_ROUTING)){
-    Regex reg(path);
-    if(reg.isValid()){
+    Regex *reg = new Regex(path);
+    if(reg->isValid()){
       regs.push_back(reg);
       actions.push_back(Action(action, data));
     }
@@ -111,9 +115,9 @@ void Tsux::dispatch(){
     int i = 0;
     bool done = false;
     while(!done && i < regs.size()){
-      if(regs[i].match(_location)){
+      if(regs[i]->match(_location)){
         //set route params
-        std::vector<std::string>& params = regs[i].getMatchs();
+        std::vector<std::string>& params = regs[i]->getMatchs();
         for(int j = 0; j < params.size(); j++){
           std::stringstream ss;
           ss << j;

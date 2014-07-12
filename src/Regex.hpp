@@ -26,6 +26,10 @@ class Regex{
     std::vector<std::string>& getMatchs(){ return matchs; }
 
   private:
+    //non copyable
+    Regex& operator=(const Regex& rhs);
+    Regex(const Regex& regex);
+
     regex_t regex;
     std::vector<std::string> matchs;
     bool valid;

@@ -41,6 +41,8 @@ int main(int argc, char** argv){
 
   std::string records;
 
+  tsux.enable(Tsux::REGEX_ROUTING);
+
   tsux.bind("/fcgi", index);
   tsux.bind("/fcgi/record", record, &records);
 

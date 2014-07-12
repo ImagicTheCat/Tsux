@@ -19,12 +19,13 @@
 
 
 class Tsux{
-  //options
-  enum{
-    REGEX_ROUTING = 1
-  };
-
   public:
+    //options
+    enum{
+      REGEX_ROUTING = 1
+    };
+
+
     Tsux();
     ~Tsux();
 
@@ -68,7 +69,7 @@ class Tsux{
     std::map<std::string, Action> routes;
 
     //regex routes
-    std::vector<Regex> regs;
+    std::vector<Regex*> regs;
     std::vector<Action> actions;
 
     unsigned int options;
