@@ -45,6 +45,8 @@ bool Regex::match(const std::string& str){
         matchs.push_back("");
     }
 
+    delete [] match;
+
     return (match_state == 0);
   }
   else 

@@ -12,7 +12,7 @@ Tsux::Tsux():in(std::cin.rdbuf()),
              out(std::cout.rdbuf()),
              err(std::cerr.rdbuf()),
              sin(NULL),sout(NULL),serr(NULL),
-             options(0){
+             options(0), flushed(true){
   FCGX_Init();
   FCGX_InitRequest(&request, 0,0);
 }
@@ -36,6 +36,8 @@ bool Tsux::enabled(unsigned int opt){
 
 
 void Tsux::initBufs(){
+  flushed = false;
+
   if(sin != NULL)
     delete sin;
   sin = new fcgi_streambuf(request.in);
@@ -54,25 +56,28 @@ void Tsux::initBufs(){
 
 bool Tsux::accept(){
   bool ok = FCGX_Accept_r(&request) == 0;
-  initBufs();
 
-  //init vars
-  post.clear();
-  get.clear();
-  response.clear();
-  response.str("");
-  route.clear();
+  if(ok){
+    initBufs();
 
-  //build location and get
-  _url = param("REQUEST_URI");
-  size_t sp1 = _url.find("?");
+    //init vars
+    post.clear();
+    get.clear();
+    response.clear();
+    response.str("");
+    route.clear();
 
-  _location = _url.substr(0, sp1);
+    //build location and get
+    _url = param("REQUEST_URI");
+    size_t sp1 = _url.find("?");
 
-  //gets vars
-  if(sp1 != std::string::npos){
-    std::string gets = _url.substr(sp1+1);
-    parseURLCouples(gets, get);
+    _location = _url.substr(0, sp1);
+
+    //gets vars
+    if(sp1 != std::string::npos){
+      std::string gets = _url.substr(sp1+1);
+      parseURLCouples(gets, get);
+    }
   }
 
   return ok;
@@ -133,31 +138,35 @@ void Tsux::dispatch(){
 }
 
 void Tsux::end(){
-  //inject headers
-  std::map<std::string, std::string>::iterator it = header.getParams().begin();
-  while(it != header.getParams().end()){
-    out << it->first << ": " << it->second << "\r\n";
-    it++;
+  //prevent useless flush
+  if(!flushed){
+    //inject headers
+    std::map<std::string, std::string>::iterator it = header.getParams().begin();
+    while(it != header.getParams().end()){
+      out << it->first << ": " << it->second << "\r\n";
+      it++;
+    }
+    out << "\r\n";
+
+    //inject response
+    out << response.str();
+
+    if(sin != NULL)
+      delete sin;
+    if(sout != NULL)
+      delete sout;
+    if(serr != NULL)
+      delete serr;
+
+    sin = NULL;
+    sout = NULL;
+    serr = NULL;
+
+    in.rdbuf(std::cin.rdbuf());
+    out.rdbuf(std::cout.rdbuf());
+    err.rdbuf(std::cerr.rdbuf());
+    flushed = true;
   }
-  out << "\r\n";
-
-  //inject response
-  out << response.str();
-
-  if(sin != NULL)
-    delete sin;
-  if(sout != NULL)
-    delete sout;
-  if(serr != NULL)
-    delete serr;
-
-  sin = NULL;
-  sout = NULL;
-  serr = NULL;
-
-  in.rdbuf(std::cin.rdbuf());
-  out.rdbuf(std::cout.rdbuf());
-  err.rdbuf(std::cerr.rdbuf());
 }
 
 void Tsux::parseURLCouples(const std::string& url, ParamSet& pset){

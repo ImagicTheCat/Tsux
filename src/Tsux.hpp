@@ -72,6 +72,8 @@ class Tsux{
     std::vector<Action> actions;
 
     unsigned int options;
+
+    bool flushed;
 };
 
 #endif
