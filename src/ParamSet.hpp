@@ -23,12 +23,9 @@ class ParamSet{
 
     std::map<std::string,std::string>& map(){ return params; }
 
-    /*
-    template<typename T> T get(const std::string& param, const T& def) const;
-    template<typename T> void set(const std::string& param, const T& val);
-    */
-
     void clear();
+
+    /* TEMPLATES */
 
     template<typename T> T get(const std::string& param, const T& def) const{
       std::map<std::string,std::string>::const_iterator it = params.find(param);
@@ -55,7 +52,6 @@ class ParamSet{
 
       params.insert(std::pair<std::string, std::string>(param, ss.str()));
     }
-
 
 
   private:
