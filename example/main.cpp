@@ -58,8 +58,11 @@ void dump(Tsux& tsux, void* data){
   tsux.response << "<h2>FILE</h2>";
   tsux.generate(tsux.file);
 
+  tsux.response << "<h2>COOKIE</h2>";
+  tsux.generate(tsux.cookie);
 
 
+  tsux.createCookie("mon_cookie", "blabla\"+([", 60);
 
 
   footer(tsux, "footer");

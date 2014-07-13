@@ -37,7 +37,10 @@ class Tsux{
     void bind(const std::string& path, TsuxAction action, void* data = NULL);
     void dispatch();
 
-    //404, etc
+    //time in seconds
+    void createCookie(const std::string& name, const std::string& data, int time);
+
+    //generate html : 404, etc
     void generate(int code);
     void generate(ParamSet set);
     void generate(FileSet set);
@@ -58,7 +61,7 @@ class Tsux{
     std::stringstream response;
 
     //data
-    ParamSet post, get, header, route, param;
+    ParamSet post, get, header, route, param, cookie;
     FileSet file;
 
     //tools
@@ -80,6 +83,8 @@ class Tsux{
   private:
     void initBufs();
     void parseMIMEData();
+
+    std::stringstream header_stream;
 
     FCGX_Request request;
     fcgi_streambuf *sin, *sout, *serr;

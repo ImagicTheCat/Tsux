@@ -111,6 +111,10 @@ bool Tsux::accept(){
     }
     else if(param.get("CONTENT_TYPE","").find("multipart/form-data") != std::string::npos)
       parseMIMEData();
+
+    //cookies
+    std::string cname, cvalue;
+    parseMIMEField("Cookie: value; "+param.get("HTTP_COOKIE", ""), cname, cvalue, cookie);
   }
 
   return ok;
@@ -183,6 +187,9 @@ void Tsux::end(){
       out << it->first << ": " << it->second << "\r\n";
       it++;
     }
+
+    //inject header stream
+    out << header_stream.str();
     out << "\r\n";
 
     //inject response
@@ -211,8 +218,14 @@ void Tsux::end(){
     post.clear();
     header.clear();
     file.clear();
+    cookie.clear();
+
     response.clear();
     response.str("");
+
+    header_stream.clear();
+    header_stream.str("");
+
 
     flushed = true;
   }
@@ -402,6 +415,7 @@ void Tsux::parseMIMEData(){
 }
 
 
+
 std::string Tsux::deleteChars(const std::string& str, const std::string& chars){
   std::string r;
   for(int i = 0; i < str.size(); i++){
@@ -451,16 +465,18 @@ void Tsux::parseMIMEField(const std::string& field, std::string& name, std::stri
         }
         //parse name
         else if(mode == NAME){
-          if(c == '\"')
+          if(c == '=')
             mode = VALUE;
           else if(c != ' ' && c != '=')
             oname += c;
         }
         //parse value
         else if(mode == VALUE){
-          if(c == '\"'){
+          if(c == ';' || end){
             mode = NONE;
-            options.set(oname, ovalue);
+            if(end)
+              ovalue += c;
+            options.set(URI::decode(oname), URI::decode(deleteChars(ovalue,"\"")));
             oname = "";
             ovalue = "";
           }
@@ -471,6 +487,14 @@ void Tsux::parseMIMEField(const std::string& field, std::string& name, std::stri
     }
     else
       value = field.substr(sp1+2);
+  }
+}
+
+
+void Tsux::createCookie(const std::string& name, const std::string& data, int time){
+  if(name.size() > 0 && data.size() > 0 && time >= 0 && name.size() < 100 && data.size() < 100){
+    header_stream << "Set-Cookie: " << URI::encode(name) << "=" << URI::encode(data) << ";"
+                  << " Max-Age=" << time << "\r\n";
   }
 }
 
