@@ -21,7 +21,7 @@ class ParamSet{
     std::string get(const std::string& param, const std::string& def) const;
     void set(const std::string& param, const std::string& val);
 
-    std::map<std::string,std::string>& getParams(){ return params; }
+    std::map<std::string,std::string>& map(){ return params; }
 
     /*
     template<typename T> T get(const std::string& param, const T& def) const;

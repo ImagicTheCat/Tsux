@@ -108,6 +108,16 @@ bool Tsux::accept(){
       std::string gets = _url.substr(sp1+1);
       parseURLCouples(gets, get);
     }
+
+    //post vars
+    if(param.get("CONTENT_TYPE","") == "application/x-www-form-urlencoded"){
+      int length = param.get("CONTENT_LENGTH", 0);
+      char data[length];
+
+      in.read(data, length);
+
+      parseURLCouples(std::string(data),post);
+    }
   }
 
   return ok;
@@ -175,8 +185,8 @@ void Tsux::end(){
   //prevent useless flush
   if(!flushed){
     //inject headers
-    std::map<std::string, std::string>::iterator it = header.getParams().begin();
-    while(it != header.getParams().end()){
+    std::map<std::string, std::string>::iterator it = header.map().begin();
+    while(it != header.map().end()){
       out << it->first << ": " << it->second << "\r\n";
       it++;
     }
@@ -220,7 +230,7 @@ void Tsux::parseURLCouples(const std::string& url, ParamSet& pset){
     if(mode){
       if(c == '='){
         if(end)
-          pset.set(tmp, "");
+          pset.set(URI::decode(tmp), "");
 
         name = tmp;
         mode = !mode;
@@ -228,11 +238,11 @@ void Tsux::parseURLCouples(const std::string& url, ParamSet& pset){
       }
       else if(c == '&'){
         tmp = "";
-        pset.set(tmp, "");
+        pset.set(URI::decode(tmp), "");
       }
       else if(end){
         tmp += c;
-        pset.set(tmp, "");
+        pset.set(URI::decode(tmp), "");
       }
       else
         tmp += c;
@@ -242,7 +252,7 @@ void Tsux::parseURLCouples(const std::string& url, ParamSet& pset){
         if(end)
           tmp += c;
 
-        pset.set(name, tmp);
+        pset.set(URI::decode(name), URI::decode(tmp));
         tmp = "";
         name = "";
         mode = !mode;
@@ -269,4 +279,15 @@ void Tsux::generate(int code){
                << "</div></body></html>";
     break;
   }
+}
+
+
+void Tsux::generate(ParamSet set){
+  std::map<std::string, std::string>::iterator it = set.map().begin();
+  response << "<ul>";
+  while(it != set.map().end()){
+    response << "<li>" << it->first << " = " << it->second << "</li>\n";
+    it++;
+  }
+  response << "</ul>";
 }

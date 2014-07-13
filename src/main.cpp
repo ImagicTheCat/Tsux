@@ -13,9 +13,9 @@ void index(Tsux &tsux, void *data){
     tsux.response << "<p>Nothin is <strong>" << tsux.param.get("nothing","") << "</strong></p>";
 
     //display get
-    std::map<std::string, std::string>::iterator it = tsux.get.getParams().begin();
+    std::map<std::string, std::string>::iterator it = tsux.get.map().begin();
     tsux.response << "<ul>";
-    while(it != tsux.get.getParams().end()){
+    while(it != tsux.get.map().end()){
       tsux.response << "<li>" << it->first << " = " << it->second << "</li>\n";
       it++;
     }
@@ -45,20 +45,25 @@ void hello(Tsux& tsux, void* data){
 }
 
 void dump(Tsux& tsux, void* data){
-  tsux.header.set("Content-type", "text/plain");
+  tsux.header.set("Content-type", "text/html");
 
-  tsux.response << tsux.param.get("DOCUMENT_URI","") << "\n"; 
-  tsux.response << tsux.param.get("CONTENT_TYPE","") << "\n";
+  tsux.response << "<h1>DUMP</h1>";
+  tsux.response << "<h2>Param</h2>";
+  tsux.generate(tsux.param);
 
-  int length = tsux.param.get("CONTENT_LENGTH", 0);
-  tsux.response << length << "\n" << std::endl;
-  int done = 0;
-  char buff[256];
-  while(done < length){
-    tsux.in.read(buff,256);
-    tsux.response << buff;
-    done += 256;
-  }
+  tsux.response << "<h2>Header</h2>";
+  tsux.generate(tsux.header);
+
+
+  tsux.response << "<h2>Route</h2>";
+  tsux.generate(tsux.route);
+
+
+  tsux.response << "<h2>Get</h2>";
+  tsux.generate(tsux.get);
+
+  tsux.response << "<h2>Post</h2>";
+  tsux.generate(tsux.post);
 }
 
 int main(int argc, char** argv){

@@ -1,7 +1,7 @@
 LIBS=-lfcgi -lfcgi++
 OPT=-g
 
-run: main.o Tsux.o ParamSet.o Action.o Regex.o
+run: main.o Tsux.o ParamSet.o Action.o Regex.o URI.o
 	g++ $^ -o $@ $(LIBS) $(OPT)
 
 main.o: src/main.cpp
@@ -19,3 +19,6 @@ Action.o: src/Action.cpp src/Action.hpp
 
 Regex.o: src/Regex.cpp src/Regex.hpp
 	g++ -c src/Regex.cpp $(OPT)
+
+URI.o: src/URI.cpp src/URI.hpp
+	g++ -c src/URI.cpp $(OPT)
