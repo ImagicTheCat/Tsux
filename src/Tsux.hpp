@@ -17,6 +17,7 @@
 #include "Action.hpp"
 #include "Regex.hpp"
 #include "URI.hpp"
+#include "FileSet.hpp"
 
 
 class Tsux{
@@ -39,6 +40,7 @@ class Tsux{
     //404, etc
     void generate(int code);
     void generate(ParamSet set);
+    void generate(FileSet set);
 
     //options methods
     void enable(unsigned int options);

@@ -291,3 +291,26 @@ void Tsux::generate(ParamSet set){
   }
   response << "</ul>";
 }
+
+void Tsux::generate(FileSet set){
+  std::map<std::string, std::vector<File> >::iterator it = set.map().begin();
+  response << "<ul>";
+  while(it != set.map().end()){
+    std::vector<File>& files = it->second;
+
+    for(int i = 0; i < files.size(); i++){
+      response << "<li>" << it->first << "[" << i << "]";
+      response << "<ul>";
+
+      response << "<li>name = " << files[i].name << "</li>";
+      response << "<li>type = " << files[i].type << "</li>";
+      response << "<li>data-length = " << files[i].data.size() << "</li>";
+
+      response << "</ul>";
+      response << "</li>\n";
+    }
+
+    it++;
+  }
+  response << "</ul>";
+}
