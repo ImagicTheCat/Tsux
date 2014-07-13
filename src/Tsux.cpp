@@ -98,15 +98,15 @@ bool Tsux::accept(){
 
 
     //build location and get
-    _url = param.get("REQUEST_URI","");
-    size_t sp1 = _url.find("?");
+    _uri = param.get("REQUEST_URI","");
+    size_t sp1 = _uri.find("?");
 
-    _location = _url.substr(0, sp1);
+    _location = _uri.substr(0, sp1);
 
     //gets vars
     if(sp1 != std::string::npos){
-      std::string gets = _url.substr(sp1+1);
-      parseURLCouples(gets, get);
+      std::string gets = _uri.substr(sp1+1);
+      parseURICouples(gets, get);
     }
 
     //post vars
@@ -116,7 +116,7 @@ bool Tsux::accept(){
 
       in.read(data, length);
 
-      parseURLCouples(std::string(data),post);
+      parseURICouples(std::string(data),post);
     }
   }
 
@@ -216,15 +216,15 @@ void Tsux::end(){
   }
 }
 
-void Tsux::parseURLCouples(const std::string& url, ParamSet& pset){
+void Tsux::parseURICouples(const std::string& uri, ParamSet& pset){
   std::string tmp;
   std::string name;
   bool mode = true;
 
   //parse couples
-  for(int i = 0; i < url.size(); i++){
-    char c = url[i];
-    bool end = (i == url.size()-1);
+  for(int i = 0; i < uri.size(); i++){
+    char c = uri[i];
+    bool end = (i == uri.size()-1);
 
     //var name
     if(mode){

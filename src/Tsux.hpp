@@ -46,7 +46,7 @@ class Tsux{
     bool enabled(unsigned int option);
 
     //accessors
-    const std::string& url()const{ return _url; }
+    const std::string& uri()const{ return _uri; }
     const std::string& location()const{ return _location; }
 
     //streams
@@ -59,7 +59,7 @@ class Tsux{
     ParamSet post, get, header, route, param;
 
     //tools
-    static void parseURLCouples(const std::string& url, ParamSet& pset);
+    static void parseURICouples(const std::string& uri, ParamSet& pset);
 
   private:
     void initBufs();
@@ -67,7 +67,7 @@ class Tsux{
     FCGX_Request request;
     fcgi_streambuf *sin, *sout, *serr;
 
-    std::string _url, _location;
+    std::string _uri, _location;
 
     //simple routes
     std::map<std::string, Action> routes;

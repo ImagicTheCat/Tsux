@@ -8,7 +8,7 @@ void index(Tsux &tsux, void *data){
 
     tsux.response << "<h1>Hello world</h1>\n";
     tsux.response << "<p>Your ip is <strong>" << tsux.param.get("REMOTE_ADDR","") << "</strong></p>";
-    tsux.response << "<p>The URL is <strong>" << tsux.url() << "</strong></p>";
+    tsux.response << "<p>The URL is <strong>" << tsux.uri() << "</strong></p>";
     tsux.response << "<p>The location is <strong>" << tsux.location() << "</strong></p>";
     tsux.response << "<p>Nothin is <strong>" << tsux.param.get("nothing","") << "</strong></p>";
 
