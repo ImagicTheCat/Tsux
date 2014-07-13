@@ -263,6 +263,7 @@ void Tsux::parseURICouples(const std::string& uri, ParamSet& pset){
   }
 }
 
+
 void Tsux::generate(int code){
   switch(code){
     case 404:
@@ -314,3 +315,5 @@ void Tsux::generate(FileSet set){
   }
   response << "</ul>";
 }
+
+

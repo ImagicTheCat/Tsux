@@ -66,6 +66,14 @@ void dump(Tsux& tsux, void* data){
   tsux.generate(tsux.post);
 }
 
+void image(Tsux& tsux, void* data){
+  File def;
+  File& img = Tsux::ref(data, def);
+
+  tsux.header.set("Content-type", img.type);
+  tsux.response << img.data;
+}
+
 int main(int argc, char** argv){
   Tsux tsux;
 
@@ -77,6 +85,12 @@ int main(int argc, char** argv){
   tsux.bind("^/fcgi/record$", record, &records);
   tsux.bind("^/fcgi/hello/(.+)-(.+)$", hello);
   tsux.bind("^/fcgi/dump$", dump);
+
+  File img;
+  if(img.loadFromFile("img.jpg"))
+    img.type = "image/jpeg";
+  tsux.bind("^/fcgi/image$", image, &img);
+
 
   while(tsux.accept()){
     tsux.dispatch();

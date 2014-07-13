@@ -63,6 +63,15 @@ class Tsux{
     //tools
     static void parseURICouples(const std::string& uri, ParamSet& pset);
 
+    //unreference data void pointer
+    template<typename T> static T& ref(void* data, T& def){
+      if(data != NULL)
+        return (T&)(*((T*)data));
+      else
+        return def;
+    }
+
+
   private:
     void initBufs();
 

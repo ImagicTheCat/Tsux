@@ -22,11 +22,7 @@ bool File::loadFromFile(const std::string& path){
       name = reg.get(1);
 
     //get content
-    char buff[256];
-    while(!file.eof()){
-      file.read(buff, 256);
-      data += buff;
-    }
+    data.assign(std::istreambuf_iterator<char>(file),std::istreambuf_iterator<char>());
 
     return true;
   }
