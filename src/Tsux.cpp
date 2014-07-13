@@ -492,7 +492,7 @@ void Tsux::parseMIMEField(const std::string& field, std::string& name, std::stri
 
 
 void Tsux::createCookie(const std::string& name, const std::string& data, int time){
-  if(name.size() > 0 && data.size() > 0 && time >= 0 && name.size() < 100 && data.size() < 100){
+  if(name.size() >= 0 && time >= 0 && name.size() < 100 && data.size() < 100){
     header_stream << "Set-Cookie: " << URI::encode(name) << "=" << URI::encode(data) << ";"
                   << " Max-Age=" << time << "\r\n";
   }

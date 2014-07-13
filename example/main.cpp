@@ -61,8 +61,10 @@ void dump(Tsux& tsux, void* data){
   tsux.response << "<h2>COOKIE</h2>";
   tsux.generate(tsux.cookie);
 
-
-  tsux.createCookie("mon_cookie", "blabla\"+([", 60);
+  if(tsux.cookie.has("mon_cookie"))
+    tsux.createCookie("mon_cookie", "", 0);
+  else
+    tsux.createCookie("mon_cookie", "blabla\"+([", 60);
 
 
   footer(tsux, "footer");
