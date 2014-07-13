@@ -62,8 +62,15 @@ std::string URI::decode(const std::string& sSrc){
     // Note from RFC1630:  "Sequences which start with a percent sign
     // but are not followed by two hexadecimal characters (0-9, A-F) are reserved
     // for future extension"
+
+  //replace '+' per ' '
+  std::string sSrc2 = sSrc;
+  for(int i = 0; i < sSrc2.size(); i++){
+    if(sSrc2[i] == '+')
+      sSrc2[i] = ' ';
+  }
     
-    const unsigned char * pSrc = (const unsigned char *)sSrc.c_str();
+    const unsigned char * pSrc = (const unsigned char *)sSrc2.c_str();
 	const int SRC_LEN = sSrc.length();
     const unsigned char * const SRC_END = pSrc + SRC_LEN;
     const unsigned char * const SRC_LAST_DEC = SRC_END - 2;   // last decodable '%' 
@@ -93,6 +100,7 @@ std::string URI::decode(const std::string& sSrc){
         *pEnd++ = *pSrc++;
 
     std::string sResult(pStart, pEnd);
+
     delete [] pStart;
 	return sResult;
 }

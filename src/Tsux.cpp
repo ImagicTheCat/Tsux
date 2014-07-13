@@ -64,15 +64,6 @@ bool Tsux::accept(){
   if(ok){
     initBufs();
 
-    //init vars
-    post.clear();
-    get.clear();
-    response.clear();
-    response.str("");
-    route.clear();
-    header.clear();
-    param.clear();
-
     //webserver params
     for( ; *request.envp; ++request.envp){
       std::string couple(*request.envp);
@@ -118,6 +109,8 @@ bool Tsux::accept(){
 
       parseURICouples(std::string(data),post);
     }
+    else if(param.get("CONTENT_TYPE","").find("multipart/form-data") != std::string::npos)
+      parseMIMEData();
   }
 
   return ok;
@@ -212,6 +205,15 @@ void Tsux::end(){
     in.rdbuf(std::cin.rdbuf());
     out.rdbuf(std::cout.rdbuf());
     err.rdbuf(std::cerr.rdbuf());
+
+    get.clear();
+    route.clear();
+    post.clear();
+    header.clear();
+    file.clear();
+    response.clear();
+    response.str("");
+
     flushed = true;
   }
 }
@@ -263,6 +265,214 @@ void Tsux::parseURICouples(const std::string& uri, ParamSet& pset){
   }
 }
 
+void Tsux::parseMIMEData(){
+  const int NONE = 0;
+  const int DATA = 1;
+  const int PARAM = 2;
+  
+  const int TEXT = 0;
+  const int FILE = 1;
+
+  int mode = NONE;
+  int type = TEXT;
+
+  File* pfile;
+
+  std::string sep, tmp, boundary, eboundary;
+  int boundary_pos;
+  std::vector<std::string> params;
+  ParamSet pset;
+
+  int done = 0;
+  int length = param.get("CONTENT_LENGTH",0);
+  while(done < length){
+    char c = in.get();
+
+    //first line : boundary
+    if(mode == NONE){
+      //search for line
+      if(c == '\n' || c == '\r'){
+        sep += c;
+        if(sep == "\r\n"){
+          mode = PARAM;
+          sep = "";
+
+          //real boundary
+          eboundary = "\r\n"+boundary;
+        }
+      }
+      else
+        boundary += c;
+    }
+    else if(mode == PARAM){
+      //search for line
+      if(c == '\n' || c == '\r'){
+        sep += c;
+        if(sep == "\r\n"){
+          if(tmp.size() > 0){
+            params.push_back(tmp);
+            tmp = "";
+          }
+          else{
+            //parse mime params
+            for(int i = 0; i < params.size(); i++){
+              std::string name, value;
+              ParamSet opts;
+              parseMIMEField(params[i], name, value, opts);
+
+              //analyse field
+              if(name == "Content-Disposition"){
+                std::string pname = opts.get("name","");
+                pset.set("name", pname);
+
+                if(opts.has("filename")){
+                  //prepare file reading
+                  std::string filename = opts.get("filename","");;
+                  pset.set("filename", filename);
+                  type = FILE;
+
+                  //alloc file into file Tsux FileSet
+                  pfile = &(file.alloc(pname));
+                }
+
+              }
+              else if(name == "Content-Type")
+                pset.set("type", value);
+            }
+
+            mode = DATA;
+            boundary_pos = 0;
+            params.clear();
+          }
+          sep = "";
+        }
+      }
+      else
+        tmp += c;
+    }
+    else if(mode == DATA){
+
+      if(type == FILE)
+        pfile->data += c;
+      else
+        tmp += c;
+
+      //waiting \r\n and boundary
+      //test if the boundary will be match
+      if(c == eboundary[boundary_pos]){
+        //boundary possible
+        if(boundary_pos == eboundary.size()-1){
+          //boundary : save data
+          mode = PARAM;
+          if(type == FILE){
+            //delete boundary from data
+            if(pfile->data.size() > eboundary.size())
+              pfile->data.resize(pfile->data.size()-eboundary.size());
+            else
+              pfile->data.clear();
+
+            pfile->name = pset.get("filename", "");
+            pfile->type = pset.get("type", "");
+          }
+          else if(type == TEXT){
+            //delete boundary from data
+            if(tmp.size() > eboundary.size())
+              tmp.resize(tmp.size()-eboundary.size());
+            else
+              tmp.clear();
+            post.set(pset.get("name",""), tmp);
+          }
+
+          tmp = "";
+          type = TEXT;
+          pset.clear();
+          
+          //skip the two next characters
+          in.get();
+          in.get();
+        }
+        
+        boundary_pos++;
+      }
+      else //no match, reset
+        boundary_pos = 0;
+    }
+    done++;
+  }
+}
+
+
+std::string Tsux::deleteChars(const std::string& str, const std::string& chars){
+  std::string r;
+  for(int i = 0; i < str.size(); i++){
+    int j = 0;
+    bool done = false;
+    while(!done && j < chars.size()){
+      if(str[i] == chars[j])
+        done = true;
+      j++;
+    }
+
+    if(!done)
+      r += str[i];
+  }
+
+  return r;
+}
+
+void Tsux::parseMIMEField(const std::string& field, std::string& name, std::string& value, ParamSet& options){
+  const int NONE = 0;
+  const int NAME = 1;
+  const int VALUE = 2;
+  
+  //split to ":"
+  size_t sp1 = field.find(":");
+  if(sp1 != std::string::npos){
+    name = deleteChars(field.substr(0, sp1), " \n\r");
+
+    //get value
+    size_t sp2 = field.find(";");
+    if(sp2 != std::string::npos){
+      value = deleteChars(field.substr(sp1+1, sp2-sp1-1)," \n\r");
+
+      //parse options
+      int mode = NONE;
+      std::string oname, ovalue;
+      for(int i = sp2; i < field.size(); i++){
+        char c = field[i];
+        bool end = (i == field.size()-1);
+
+        //waiting
+        if(mode == NONE){
+          if(c != ';' && c != ' '){
+            oname += c;
+            mode = NAME;
+          }
+        }
+        //parse name
+        else if(mode == NAME){
+          if(c == '\"')
+            mode = VALUE;
+          else if(c != ' ' && c != '=')
+            oname += c;
+        }
+        //parse value
+        else if(mode == VALUE){
+          if(c == '\"'){
+            mode = NONE;
+            options.set(oname, ovalue);
+            oname = "";
+            ovalue = "";
+          }
+          else
+            ovalue += c;
+        }
+      }
+    }
+    else
+      value = field.substr(sp1+2);
+  }
+}
 
 void Tsux::generate(int code){
   switch(code){

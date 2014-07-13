@@ -59,9 +59,14 @@ class Tsux{
 
     //data
     ParamSet post, get, header, route, param;
+    FileSet file;
 
     //tools
     static void parseURICouples(const std::string& uri, ParamSet& pset);
+    static std::string deleteChars(const std::string& str, const std::string& chars);
+
+    //parse field like [name: value; opt1=val1; opt2="val2"]
+    static void parseMIMEField(const std::string& field, std::string& name, std::string& value, ParamSet& options);
 
     //unreference data void pointer
     template<typename T> static T& ref(void* data, T& def){
@@ -74,6 +79,7 @@ class Tsux{
 
   private:
     void initBufs();
+    void parseMIMEData();
 
     FCGX_Request request;
     fcgi_streambuf *sin, *sout, *serr;

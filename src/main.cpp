@@ -64,6 +64,9 @@ void dump(Tsux& tsux, void* data){
 
   tsux.response << "<h2>Post</h2>";
   tsux.generate(tsux.post);
+
+  tsux.response << "<h2>File</h2>";
+  tsux.generate(tsux.file);
 }
 
 void image(Tsux& tsux, void* data){
@@ -72,6 +75,14 @@ void image(Tsux& tsux, void* data){
 
   tsux.header.set("Content-type", img.type);
   tsux.response << img.data;
+}
+
+void dumpfile(Tsux& tsux, void* data){
+  File def;
+  File& file = tsux.file.get("file", def);
+  tsux.header.set("Content-type", file.type);
+  tsux.header.set("Content-Disposition", "attachment; filename=\""+file.name+"\"");
+  tsux.response << file.data;
 }
 
 int main(int argc, char** argv){
@@ -85,6 +96,7 @@ int main(int argc, char** argv){
   tsux.bind("^/fcgi/record$", record, &records);
   tsux.bind("^/fcgi/hello/(.+)-(.+)$", hello);
   tsux.bind("^/fcgi/dump$", dump);
+  tsux.bind("^/fcgi/dump/file$", dumpfile);
 
   File img;
   if(img.loadFromFile("img.jpg"))

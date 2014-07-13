@@ -27,6 +27,8 @@ class FileSet{
     std::map<std::string, std::vector<File> >& map(){ return entries; }
     std::vector<File>& get(const std::string& param, std::vector<File>& def);
 
+    void clear(){ entries.clear(); }
+
     //if multiple : return the first file
     File& get(const std::string& param, File& def);
 
