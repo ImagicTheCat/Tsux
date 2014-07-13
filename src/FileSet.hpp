@@ -29,6 +29,8 @@ class FileSet{
 
     void clear(){ entries.clear(); }
 
+    bool has(const std::string& param) const;
+
     //if multiple : return the first file
     File& get(const std::string& param, File& def);
 

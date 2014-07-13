@@ -1,11 +1,11 @@
-LIBS=-lfcgi -lfcgi++
-OPT=-g
+OPT=-Wall -shared -fPIC
+OBJ=Tsux.o ParamSet.o FileSet.o Action.o Regex.o URI.o
 
-run: main.o Tsux.o ParamSet.o FileSet.o Action.o Regex.o URI.o
-	g++ $^ -o $@ $(LIBS) $(OPT)
+lib/libtsux.so: $(OBJ)
+	g++ $^ -o $@ $(OPT)
 
-main.o: src/main.cpp
-	g++ -c src/main.cpp $(OPT)
+clean:
+	rm $(OBJ)
 
 Tsux.o: src/Tsux.cpp src/Tsux.hpp
 	g++ -c src/Tsux.cpp $(OPT)

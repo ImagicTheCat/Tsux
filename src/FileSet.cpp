@@ -32,6 +32,10 @@ bool File::loadFromFile(const std::string& path){
 
 /* FILESET */
 
+bool FileSet::has(const std::string& param) const{
+  return entries.find(param) != entries.end();
+}
+
 File& FileSet::alloc(const std::string& param){
   std::map<std::string, std::vector<File> >::iterator it = entries.find(param);
   //add if doesn't exist
