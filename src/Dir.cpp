@@ -1,6 +1,11 @@
+/* 
+ * Dir research encapsulation
+ *
+ * writen by ImagicTheCat for Tsux
+ * https://github.com/ImagicTheCat/Tsux
+ */
 
 #include "Dir.hpp"
-
 
 void Dir::explode(const std::string& path, std::vector<std::string>& list, int options, bool first){
   DIR* dir = opendir(path.c_str());
