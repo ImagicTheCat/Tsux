@@ -1,3 +1,10 @@
+/* 
+ * MIME types manager
+ *
+ * writen by ImagicTheCat for Tsux
+ * https://github.com/ImagicTheCat/Tsux
+ */
+
 
 #include "MIMEType.hpp"
 
