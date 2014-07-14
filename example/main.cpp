@@ -5,7 +5,7 @@
 void header(Tsux& tsux, const std::string& title="Title", const std::string& subtitle="subtitle"){
   tsux.response << "<!DOCTYPE html>"
                 << "<html><head><title>" << title << "</title>"
-                << "<link href=\"/file/css\" rel=\"stylesheet\" type=\"text/css\">"
+                << "<link href=\"/file/style.css\" rel=\"stylesheet\" type=\"text/css\">"
                 << "</head>"
                 << "<body><div id=\"header\">"
                 << "<h1>" << title << "</h1>"
@@ -75,25 +75,33 @@ int main(int argc, char** argv){
   Tsux tsux;
 
   FileSet files;
-  File& css = files.alloc("css");
-  css.loadFromFile("style.css");
-  css.type = "text/css";
+
+  std::vector<std::string> list;
+  Regex rext("^(.*)\\.(.*)$");
+  Dir::explode("file/", list, Dir::SFILE | Dir::RECURSIVE);
+  for(int i = 0; i < list.size(); i++){
+    File& f = files.alloc(list[i].substr(5));
+    f.loadFromFile(list[i]);
+    rext.match(list[i]);
+    std::string ext = rext.get(1);
+    if(ext == "css")
+      f.type = "text/css";
+    else if(ext == "jpg")
+      f.type = "image/jpeg";
+    else if(ext == "png")
+      f.type = "image/png";
+    else
+      f.type = "application/octet-stream";
+  }
 
   tsux.enable(Tsux::REGEX_ROUTING);
 
-  tsux.bind("^/file/([[:alnum:]]+)$", get_file, &files);
+  tsux.bind("^/file/(.+)$", get_file, &files);
   tsux.bind("^/$", index);
   tsux.bind("^/dump$", dump);
 
-  std::vector<std::string> list;
-  Dir::explode("data/", list, Dir::SFILE | Dir::RECURSIVE);
-
-  
   while(tsux.accept()){
     tsux.dispatch();
-
-    for(int i = 0; i < list.size(); i++)
-      tsux.response << list[i] << "<br/>";
     tsux.end();
   }
 
