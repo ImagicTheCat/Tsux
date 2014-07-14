@@ -1,5 +1,6 @@
 
 #include <Tsux.hpp>
+#include <Dir.hpp>
 
 void header(Tsux& tsux, const std::string& title="Title", const std::string& subtitle="subtitle"){
   tsux.response << "<!DOCTYPE html>"
@@ -83,9 +84,16 @@ int main(int argc, char** argv){
   tsux.bind("^/file/([[:alnum:]]+)$", get_file, &files);
   tsux.bind("^/$", index);
   tsux.bind("^/dump$", dump);
+
+  std::vector<std::string> list;
+  Dir::explode("data/", list, Dir::SFILE | Dir::RECURSIVE);
+
   
   while(tsux.accept()){
     tsux.dispatch();
+
+    for(int i = 0; i < list.size(); i++)
+      tsux.response << list[i] << "<br/>";
     tsux.end();
   }
 
