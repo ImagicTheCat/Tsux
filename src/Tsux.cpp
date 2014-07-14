@@ -15,6 +15,8 @@ Tsux::Tsux():in(std::cin.rdbuf()),
              options(0), flushed(true){
   FCGX_Init();
   FCGX_InitRequest(&request, 0,0);
+
+  MIMEType::init();
 }
 
 Tsux::~Tsux(){

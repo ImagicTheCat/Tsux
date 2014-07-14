@@ -21,6 +21,9 @@ bool File::loadFromFile(const std::string& path){
     if(reg.isValid() && reg.match(path))
       name = reg.get(1);
 
+    //set type
+    type = MIMEType::get(name);
+
     //get content
     data.assign(std::istreambuf_iterator<char>(file),std::istreambuf_iterator<char>());
 

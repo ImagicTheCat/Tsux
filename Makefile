@@ -1,5 +1,5 @@
 OPT=-Wall -shared -fPIC
-OBJ=Tsux.o ParamSet.o FileSet.o Action.o Regex.o URI.o Dir.o
+OBJ=Tsux.o ParamSet.o FileSet.o Action.o Regex.o URI.o Dir.o MIMEType.o
 
 lib/libtsux.so: $(OBJ)
 	g++ $^ -o $@ $(OPT)
@@ -27,4 +27,7 @@ URI.o: src/URI.cpp src/URI.hpp
 
 Dir.o: src/Dir.cpp src/Dir.hpp
 	g++ -c src/Dir.cpp $(OPT)
+
+MIMEType.o: src/MIMEType.cpp src/MIMEType.hpp
+	g++ -c src/MIMEType.cpp $(OPT)
 

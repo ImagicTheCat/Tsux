@@ -18,6 +18,7 @@
 #include "Regex.hpp"
 #include "URI.hpp"
 #include "FileSet.hpp"
+#include "MIMEType.hpp"
 
 
 class Tsux{

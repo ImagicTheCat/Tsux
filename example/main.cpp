@@ -1,6 +1,7 @@
 
 #include <Tsux.hpp>
 #include <Dir.hpp>
+#include <MIMEType.hpp>
 
 void header(Tsux& tsux, const std::string& title="Title", const std::string& subtitle="subtitle"){
   tsux.response << "<!DOCTYPE html>"
@@ -77,21 +78,10 @@ int main(int argc, char** argv){
   FileSet files;
 
   std::vector<std::string> list;
-  Regex rext("^(.*)\\.(.*)$");
   Dir::explode("file/", list, Dir::SFILE | Dir::RECURSIVE);
   for(int i = 0; i < list.size(); i++){
     File& f = files.alloc(list[i].substr(5));
     f.loadFromFile(list[i]);
-    rext.match(list[i]);
-    std::string ext = rext.get(1);
-    if(ext == "css")
-      f.type = "text/css";
-    else if(ext == "jpg")
-      f.type = "image/jpeg";
-    else if(ext == "png")
-      f.type = "image/png";
-    else
-      f.type = "application/octet-stream";
   }
 
   tsux.enable(Tsux::REGEX_ROUTING);

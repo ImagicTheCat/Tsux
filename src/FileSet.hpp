@@ -15,6 +15,7 @@
 #include <vector>
 #include <map>
 #include "Regex.hpp"
+#include "MIMEType.hpp"
 
 struct File{
   std::string name, type, data;
