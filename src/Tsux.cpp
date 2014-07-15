@@ -124,12 +124,17 @@ bool Tsux::accept(){
 
 
 void Tsux::bind(const std::string& path, TsuxAction action, void* data){
+  bind(path, Action(action, data));
+}
+
+
+void Tsux::bind(const std::string& path, const Action& action){
   //regex routing
   if(enabled(REGEX_ROUTING)){
     Regex *reg = new Regex(path);
     if(reg->isValid()){
       regs.push_back(reg);
-      actions.push_back(Action(action, data));
+      actions.push_back(action);
     }
   }
   //simple routing
@@ -138,7 +143,7 @@ void Tsux::bind(const std::string& path, TsuxAction action, void* data){
     if(it != routes.end())
       routes.erase(it);
 
-    routes.insert(std::pair<std::string, Action>(path, Action(action, data)));
+    routes.insert(std::pair<std::string, Action>(path, action));
   }
 }
 

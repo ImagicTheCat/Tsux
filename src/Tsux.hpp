@@ -35,7 +35,13 @@ class Tsux{
     //methods
     bool accept();
     void end();
+
+    //bind tsux action
     void bind(const std::string& path, TsuxAction action, void* data = NULL);
+    void bind(const std::string& path, const Action& action);
+
+
+    //eval possible routes
     void dispatch();
 
     //time in seconds

@@ -1,11 +1,17 @@
 OPT=-Wall -shared -fPIC
-OBJ=Tsux.o ParamSet.o FileSet.o Action.o Regex.o URI.o Dir.o MIMEType.o
+OBJ=Tsux.o ParamSet.o FileSet.o Action.o Regex.o URI.o Dir.o MIMEType.o Module.o
+TARGET=libtsux.so
 
-lib/libtsux.so: $(OBJ)
-	g++ $^ -o $@ $(OPT)
+all: $(OBJ)
+	g++ $^ -o $(TARGET) $(OPT)
 
 clean:
 	rm $(OBJ)
+
+install:
+	mv $(TARGET) /usr/local/lib
+	mkdir -p /usr/local/include/tsux
+	cp src/*.hpp /usr/local/include/tsux
 
 Tsux.o: src/Tsux.cpp src/Tsux.hpp
 	g++ -c src/Tsux.cpp $(OPT)
@@ -31,3 +37,5 @@ Dir.o: src/Dir.cpp src/Dir.hpp
 MIMEType.o: src/MIMEType.cpp src/MIMEType.hpp
 	g++ -c src/MIMEType.cpp $(OPT)
 
+Module.o: src/Module.cpp src/Module.hpp
+	g++ -c src/Module.cpp $(OPT)

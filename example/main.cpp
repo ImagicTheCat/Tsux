@@ -1,7 +1,7 @@
 
-#include <Tsux.hpp>
-#include <Dir.hpp>
-#include <MIMEType.hpp>
+#include <tsux/Tsux.hpp>
+#include <tsux/Dir.hpp>
+#include <tsux/MIMEType.hpp>
 
 void header(Tsux& tsux, const std::string& title="Title", const std::string& subtitle="subtitle"){
   tsux.response << "<!DOCTYPE html>"
