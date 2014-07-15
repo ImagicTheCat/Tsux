@@ -3,6 +3,8 @@
 #include <tsux/Dir.hpp>
 #include <tsux/MIMEType.hpp>
 
+#include "MainMod.hpp"
+
 void header(Tsux& tsux, const std::string& title="Title", const std::string& subtitle="subtitle"){
   tsux.response << "<!DOCTYPE html>"
                 << "<html><head><title>" << title << "</title>"
@@ -89,6 +91,8 @@ int main(int argc, char** argv){
   tsux.bind("^/file/(.+)$", get_file, &files);
   tsux.bind("^/$", index);
   tsux.bind("^/dump$", dump);
+
+  MainMod main(tsux);
 
   while(tsux.accept()){
     tsux.dispatch();

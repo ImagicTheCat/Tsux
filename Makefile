@@ -1,4 +1,4 @@
-OPT=-Wall -shared -fPIC
+OPT=-Wall -shared -fPIC -g
 OBJ=Tsux.o ParamSet.o FileSet.o Action.o Regex.o URI.o Dir.o MIMEType.o Module.o
 TARGET=libtsux.so
 

@@ -45,7 +45,9 @@ class Module{
     
     /* Module */
     //bind action for this module
-    void bind(const std::string& path, ModAction action);
+    template<typename T> void bind(const std::string& path, void (T::*action)(void)){
+      tsux.bind(path, Action((ModAction)action, this));
+    }
 
     //accessors
     const std::string& name()const{ return _name; }

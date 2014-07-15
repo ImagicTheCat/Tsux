@@ -12,12 +12,7 @@
 Module::Module(Tsux& _tsux, const std::string& name):
     tsux(_tsux), _name(name),
     //build shortcuts
-    out(tsux.out), in(tsux.in), err(tsux.err), response(tsux.response),
-    post(tsux.post), get(tsux.get), header(tsux.header), route(tsux.route),
-    param(tsux.param), cookie(tsux.cookie), file(tsux.file){
-}
-
-
-void Module::bind(const std::string& path, ModAction action){
-  tsux.bind(path, Action(action, this));
+    out(_tsux.out), in(_tsux.in), err(_tsux.err), response(_tsux.response),
+    post(_tsux.post), get(_tsux.get), header(_tsux.header), route(_tsux.route),
+    param(_tsux.param), cookie(_tsux.cookie), file(_tsux.file){
 }

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-g++ main.cpp -o example -ltsux -lfcgi -lfcgi++
+g++ main.cpp MainMod.cpp -o example -ltsux -lfcgi -lfcgi++
