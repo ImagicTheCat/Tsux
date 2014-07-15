@@ -40,6 +40,12 @@ class Tsux{
     void bind(const std::string& path, TsuxAction action, void* data = NULL);
     void bind(const std::string& path, const Action& action);
 
+    /* modules managment */
+    void registerModule(const std::string& name, Module* module);
+    void unregisterModule(const std::string& name);
+    //get module by name, if not found return NULL
+    Module* module(const std::string& name);
+
 
     //eval possible routes
     void dispatch();
@@ -97,6 +103,9 @@ class Tsux{
     fcgi_streambuf *sin, *sout, *serr;
 
     std::string _uri, _location;
+
+    //modules
+    std::map<std::string, Module*> modules;
 
     //simple routes
     std::map<std::string, Action> routes;

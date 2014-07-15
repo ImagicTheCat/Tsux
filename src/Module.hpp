@@ -16,7 +16,9 @@
 
 class Module{
   public:
+    //the name need to be unique
     Module(Tsux& tsux, const std::string& name);
+    ~Module();
 
     /* Interface to tsux */
     //time in seconds

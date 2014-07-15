@@ -123,6 +123,7 @@ bool Tsux::accept(){
 }
 
 
+//bind normal action
 void Tsux::bind(const std::string& path, TsuxAction action, void* data){
   bind(path, Action(action, data));
 }
@@ -146,6 +147,30 @@ void Tsux::bind(const std::string& path, const Action& action){
     routes.insert(std::pair<std::string, Action>(path, action));
   }
 }
+
+void Tsux::registerModule(const std::string& name, Module* module){
+  if(module != NULL){
+    std::map<std::string, Module*>::iterator it = modules.find(name);
+    if(it != modules.end())
+      modules.erase(it);
+    modules.insert(std::pair<std::string, Module*>(name, module));
+  }
+}
+
+void Tsux::unregisterModule(const std::string& name){
+  std::map<std::string, Module*>::iterator it = modules.find(name);
+  if(it != modules.end())
+      modules.erase(it);
+}
+
+Module* Tsux::module(const std::string& name){
+  std::map<std::string, Module*>::iterator it = modules.find(name);
+  if(it != modules.end())
+    return it->second;
+  else
+    return NULL;
+}
+
 
 void Tsux::dispatch(){
   //find route
