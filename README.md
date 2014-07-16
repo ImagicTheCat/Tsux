@@ -239,7 +239,7 @@ int main(int argc, char** argv){
 
   FileSet files;
 
-  //load files of the dir "files/" in memory
+  /* Load files of the dir "files/" in memory */
   std::vector<std::string> list;
 
   //explode dir
