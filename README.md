@@ -21,7 +21,7 @@ Tsux is based on FastCGI (especially libfcgi and libfcgi++) and try to be simple
 * mimetypes matching
 * regex, dirent encapsulations and easy file loading
 
-Tsux don't have the goal to implement current web standart, but to let you the capacity to build simple website in C++.
+Tsux don't have the goal to implement current web technologies, but to let you the capacity to build simple website in C++.
 
 ## Tutorials
 ### Simple main
@@ -29,13 +29,19 @@ Tsux don't have the goal to implement current web standart, but to let you the c
 #include <tsux/Tsux.hpp>
 
 int main(int argc, char** argv){
+  //tsux instanciation
   Tsux tsux;
 
+  //waiting request loop
   while(tsux.accept()){
+    //a request
+    //set content-type to text/plain
     tsux.header.set("Content-Type", "text/plain");
 
+    //send content
     tsux.response << "Hello world !";
 
+    //flush response
     tsux.end();
   }
 
