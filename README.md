@@ -213,7 +213,7 @@ std::cout << file.name << " sended." << std::endl; //the filename
 ### Load and send file to client
 *a little file manager*
 
-**Warning : ** FCGI and Tsux aren't good to send huge files cause of memory issue (all the file is cached before sending the request
+**Warning** : FCGI and Tsux aren't good to send huge files cause of memory issue (all the file is cached before sending the request
 
 ```cpp
 void get_file(Tsux& tsux, void* data){
