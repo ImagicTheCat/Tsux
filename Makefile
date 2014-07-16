@@ -1,5 +1,5 @@
 OPT=-Wall -shared -fPIC -g
-OBJ=Tsux.o ParamSet.o FileSet.o Action.o Regex.o URI.o Dir.o MIMEType.o Module.o
+OBJ=Tsux.o ParamSet.o FileSet.o Action.o Regex.o URI.o Dir.o MIMEType.o Module.o Template.o
 TARGET=libtsux.so
 
 all: $(OBJ)
@@ -39,3 +39,6 @@ MIMEType.o: src/MIMEType.cpp src/MIMEType.hpp
 
 Module.o: src/Module.cpp src/Module.hpp
 	g++ -c src/Module.cpp $(OPT)
+
+Template.o: src/Template.cpp src/Template.hpp
+	g++ -c src/Template.cpp $(OPT)

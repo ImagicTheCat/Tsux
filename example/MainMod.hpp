@@ -2,6 +2,7 @@
 #define H_MAINMOD
 
 #include <tsux/Module.hpp>
+#include <tsux/Template.hpp>
 
 class MainMod : public Module{
   public:
@@ -11,6 +12,8 @@ class MainMod : public Module{
 
   private:
     std::string messages;
+    std::string content;
+    Template tpl;
 };
 
 #endif
