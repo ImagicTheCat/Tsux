@@ -77,7 +77,7 @@ int main(int argc, char** argv){
 }
 ```
 
-You can give an argument to the route
+You can give data to the callback
 ```cpp
 #include <tsux/Tsux.hpp>
 
