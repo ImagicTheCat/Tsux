@@ -48,3 +48,104 @@ int main(int argc, char** argv){
   return 0;
 }
 ```
+
+### Routing
+#### Simple route
+```cpp
+#include <tsux/Tsux.hpp>
+
+//callback function of /my/route
+void myroute(Tsux& tsux, void *data){
+  tsux.header.set("Content-Type", "text/plain");
+  tsux.response << "You are on /my/route";
+}
+
+int main(int argc, char** argv){
+  Tsux tsux;
+
+  //bind route to myroute function
+  tsux.bind("/my/route", myroute);
+
+  while(tsux.accept()){
+    //dispatch request to the routes
+    tsux.dispatch();
+
+    tsux.end();
+  }
+
+  return 0;
+}
+```
+
+You can give an argument to the route
+```cpp
+#include <tsux/Tsux.hpp>
+
+//callback function of /my/route
+void myroute(Tsux& tsux, void *data){
+  //unreference data with a default object
+  //or other method
+  std::string default_str;
+  std::string& str = Tsux::ref(data, default_str); //return an alias to default_str if data is NULL
+                                                   //return alias to the data if not
+
+  tsux.header.set("Content-Type", "text/plain");
+  tsux.response << "You are on /my/route";
+
+  //each request will change data
+  str += "NEW REQUEST\n";
+  tsux.response << "\n" << str;
+}
+
+int main(int argc, char** argv){
+  Tsux tsux;
+
+  std::string data;
+
+  //bind route to myroute function
+  tsux.bind("/my/route", myroute, &data);
+
+  while(tsux.accept()){
+    //dispatch request to the routes
+    tsux.dispatch();
+
+    tsux.end();
+  }
+
+  return 0;
+}
+```
+
+#### Regex routing
+```cpp
+#include <tsux/Tsux.hpp>
+
+//callback function of /my/route
+void myroute(Tsux& tsux, void *data){
+  tsux.header.set("Content-Type", "text/plain");
+  tsux.response << "You are on /my/route, arg : ";
+
+  //get the first parameter of the route
+  //you need to specify a default value (can be string, int, float, double, etc)
+  tsux.reponse << tsux.route.get("1", "");
+}
+
+int main(int argc, char** argv){
+  Tsux tsux;
+
+  //enable REGEX_ROUTING option
+  tsux.enable(Tsux::REGEX_ROUTING);
+
+  //bind route to myroute function
+  tsux.bind("^/my/route-(.*)$", myroute);
+
+  while(tsux.accept()){
+    //dispatch request to the routes
+    tsux.dispatch();
+
+    tsux.end();
+  }
+
+  return 0;
+}
+```
