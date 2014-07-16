@@ -179,7 +179,7 @@ std::string ip = tsux.param.get("REMOTE_ADDR","");
 tsux.header.set("Content-Type", "image/png");
 
 //uri
-tsux.uri(); //contain get vars
+tsux.uri(); //also contain get vars
 
 //location
 tsux.location(); //the matched route only
@@ -212,5 +212,45 @@ std::cout << file.name << " sended." << std::endl; //the filename
 
 ### Load and send file to client
 *a little file manager*
-**Warning : FCGI (mostly Tsux) aren't good to send huge files cause of memory issue (all the file is cached before sending the request**
 
+**Warning : **FCGI and Tsux aren't good to send huge files cause of memory issue (all the file is cached before sending the request
+
+```cpp
+void get_file(Tsux& tsux, void* data){
+  FileSet def;
+  FileSet& files = Tsux::ref(data, def);
+
+  if(files.has(tsux.route.get("1", ""))){
+    File def;
+    File& file = files.get(tsux.route.get("1",""), def);
+    tsux.header.set("Content-Type", file.type);
+    tsux.response << file.data;
+  }
+  else
+    tsux.generate(404);
+}
+
+int main(int argc, char** argv){
+  Tsux tsux;
+
+  FileSet files;
+
+  std::vector<std::string> list;
+  Dir::explode("files/", list, Dir::SFILE | Dir::RECURSIVE);
+  for(int i = 0; i < list.size(); i++){
+    File& f = files.alloc(list[i].substr(5));
+    f.loadFromFile(list[i]);
+  }
+
+  tsux.enable(Tsux::REGEX_ROUTING);
+
+  tsux.bind("^/file/(.+)$", get_file, &files);
+
+  while(tsux.accept()){
+    tsux.dispatch();
+    tsux.end();
+  }
+
+  return 0;
+}
+```
