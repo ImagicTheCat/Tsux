@@ -50,7 +50,8 @@ int main(int argc, char** argv){
 ```
 
 ### Routing
-#### Simple route
+
+#### Simple routing
 ```cpp
 #include <tsux/Tsux.hpp>
 
@@ -77,6 +78,7 @@ int main(int argc, char** argv){
 }
 ```
 
+
 You can give data to the callback
 ```cpp
 #include <tsux/Tsux.hpp>
@@ -86,7 +88,8 @@ void myroute(Tsux& tsux, void *data){
   //unreference data with a default object
   //or other method
   std::string default_str;
-  std::string& str = Tsux::ref(data, default_str); //return an alias to default_str if data is NULL
+  std::string& str = Tsux::ref(data, default_str); //return an alias to default_str 
+                                                   //if data is NULL
                                                    //return alias to the data if not
 
   tsux.header.set("Content-Type", "text/plain");
@@ -115,6 +118,7 @@ int main(int argc, char** argv){
   return 0;
 }
 ```
+
 
 #### Regex routing
 ```cpp
@@ -149,3 +153,64 @@ int main(int argc, char** argv){
   return 0;
 }
 ```
+
+### Variables
+
+#### Variable sets and others
+```cpp
+//route
+std::string article = tsux.route.get("1","");
+
+//get
+int page = tsux.get.get("page", 0);
+
+//post
+if(tsux.post.has("pseudo")){
+  //my form action
+}
+
+//cookies (read only, if you want to create a cookie, look at tsux.createCookie())
+std::string cookie = tsux.cookie.get("mycookie","");
+
+//webserver params
+std::string ip = tsux.param.get("REMOTE_ADDR","");
+
+//header
+tsux.header.set("Content-Type", "image/png");
+
+//uri
+tsux.uri(); //contain get vars
+
+//location
+tsux.location(); //the matched route only
+
+//set a var for this request
+tsux.post.set("number", 5);
+```
+
+
+#### File set
+When a file is uploaded : 
+```cpp
+//default file
+File def;
+
+//if multiple, return the first
+File& file = tsux.file.get("myfilefield", def);
+
+/* ALL FILES */
+//default files vector
+std::vector<File> defs;
+
+std::vector<File>& files = tsux.file.get("myfilefield", defs);
+
+//file structure (complete as possible)
+tsux.header.set("Content-Type", file.type); //the mimetype
+tsux.response << file.data; //data
+std::cout << file.name << " sended." << std::endl; //the filename
+```
+
+### Load and send file to client
+*a little file manager*
+**Warning : FCGI (mostly Tsux) aren't good to send huge files cause of memory issue (all the file is cached before sending the request**
+
