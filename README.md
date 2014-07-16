@@ -213,20 +213,24 @@ std::cout << file.name << " sended." << std::endl; //the filename
 ### Load and send file to client
 *a little file manager*
 
-**Warning** : FCGI and Tsux aren't good to send huge files cause of memory issue (all the file is cached before sending the request
+**Warning** : FCGI and Tsux aren't good to send huge files cause of memory issue (all the file is cached before sending the request)
 
 ```cpp
+//we make our callback for the file route
 void get_file(Tsux& tsux, void* data){
   FileSet def;
   FileSet& files = Tsux::ref(data, def);
+  std::string path = tsux.route.get("1","");
 
-  if(files.has(tsux.route.get("1", ""))){
+  if(files.has(path)){
     File def;
-    File& file = files.get(tsux.route.get("1",""), def);
+    File& file = files.get(path, def);
+
+    //set header and send data
     tsux.header.set("Content-Type", file.type);
     tsux.response << file.data;
   }
-  else
+  else //generate a default 404 page if the file is not found
     tsux.generate(404);
 }
 
@@ -235,15 +239,23 @@ int main(int argc, char** argv){
 
   FileSet files;
 
+  //load files of the dir "files/" in memory
   std::vector<std::string> list;
+
+  //explode dir
   Dir::explode("files/", list, Dir::SFILE | Dir::RECURSIVE);
+
   for(int i = 0; i < list.size(); i++){
+    //allocate new file with his name withtout the path
     File& f = files.alloc(list[i].substr(5));
+
+    //load the file, the mimetype will be find by the extension
     f.loadFromFile(list[i]);
   }
 
   tsux.enable(Tsux::REGEX_ROUTING);
 
+  //bind file route and give the FileSet
   tsux.bind("^/file/(.+)$", get_file, &files);
 
   while(tsux.accept()){
