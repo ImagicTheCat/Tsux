@@ -296,7 +296,7 @@ Do whatever you want.
 
 The template system is actually very simple. 
 
-#### Template class
+#### Template use
 ```cpp
 Template tpl;
 
