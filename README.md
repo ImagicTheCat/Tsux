@@ -88,7 +88,8 @@ You can give data to the callback
 and unreference it in the callback
 ```cpp
   std::string default_str;
-  std::string& str = Tsux::ref(data, default_str); //return alias to default_str if data is NULL
+  //return alias to default_str if data is NULL
+  std::string& str = Tsux::ref(data, default_str); 
 
   //each request will change data
   str += "NEW REQUEST\n";
@@ -227,4 +228,51 @@ int main(int argc, char** argv){
 
   return 0;
 }
+```
+
+### Module
+
+Modules let you manage your code and memory and have tsux shortcuts.
+
+#### Module definition
+
+MyModule.hpp
+```cpp
+#include <tsux/Module.hpp>
+
+class MyModule : public Module{
+  public:
+    MyModule(Tsux& tsux);
+    void myroute();
+
+  private:
+    std::string content;
+};
+```
+
+MyModule.cpp
+```cpp
+#include "MyModule.hpp"
+
+MyModule::MyModule(Tsux& tsux):Module(tsux,"mymodule"){
+  bind("^/my/route$", &MyModule::myroute);
+  content = "Hello world !";
+}
+
+void MyModule::myroute(){
+  header.set("Content-Type", "text/plain");
+  response << content;
+}
+```
+
+#### Instanciation
+
+Just instanciate the module with tsux and whatever you want before listening request
+```cpp
+  MyModule(tsux);
+
+  while(tsux.accept()){
+    tsux.dispatch();
+    tsux.end();
+  }
 ```
