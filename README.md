@@ -267,7 +267,7 @@ void MyModule::myroute(){
 
 #### Instanciation
 
-Just instanciate the module with tsux and whatever you want before listening request
+Just instanciate the module with tsux.
 ```cpp
   MyModule mymodule(tsux);
 
@@ -291,3 +291,48 @@ Or just use a parameter to your module constructor
 ```
 
 Do whatever you want.
+
+### Template
+
+The template system is actually very simple. 
+
+#### Template class
+```cpp
+Template tpl;
+
+//load from memory
+tpl.data = "<html>{{content}}</html>";
+
+//load from file
+tpl.loadFromFile("mytemplate.html.tpl");
+
+//compile the template
+tpl.compile();
+
+//set data with string
+tpl.set("content", "mycontent");
+
+//or with string pointer (linked data)
+std::string mycontent = "mycontent";
+tpl.set("content", &mycontent);
+
+//render the template
+tsux.response << tpl.render();
+```
+
+#### Template notation
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{title}}</title>
+  </head>
+
+  <body>
+    {{content}}
+  </body>
+</html>
+```
+
+All the characters between {{ and }} will be a part of the identifier (also space)
