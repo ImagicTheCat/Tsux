@@ -99,60 +99,40 @@ void myroute(Tsux& tsux, void *data){
   str += "NEW REQUEST\n";
   tsux.response << "\n" << str;
 }
-
-int main(int argc, char** argv){
-  Tsux tsux;
-
   std::string data;
-
-  //bind route to myroute function
   tsux.bind("/my/route", myroute, &data);
+```
 
-  while(tsux.accept()){
-    //dispatch request to the routes
-    tsux.dispatch();
+and unreference it
+```cpp
+  std::string default_str;
+  std::string& str = Tsux::ref(data, default_str); //return alias to default_str if data is NULL
 
-    tsux.end();
-  }
+  //each request will change data
+  str += "NEW REQUEST\n";
+  tsux.response << "\n" << str;
 
-  return 0;
-}
 ```
 
 
 #### Regex routing
+
+You can use regex routing to catch parameters in the url
 ```cpp
-#include <tsux/Tsux.hpp>
+ //enable REGEX_ROUTING option
+  tsux.enable(Tsux::REGEX_ROUTING);
 
-//callback function of /my/route
-void myroute(Tsux& tsux, void *data){
-  tsux.header.set("Content-Type", "text/plain");
-  tsux.response << "You are on /my/route, arg : ";
+  //bind route to myroute function with regex
+  tsux.bind("^/my/route-(.*)$", myroute);
+```
 
+And in the route callback
+```cpp
   //get the first parameter of the route
   //you need to specify a default value (can be string, int, float, double, etc)
   tsux.reponse << tsux.route.get("1", "");
-}
-
-int main(int argc, char** argv){
-  Tsux tsux;
-
-  //enable REGEX_ROUTING option
-  tsux.enable(Tsux::REGEX_ROUTING);
-
-  //bind route to myroute function
-  tsux.bind("^/my/route-(.*)$", myroute);
-
-  while(tsux.accept()){
-    //dispatch request to the routes
-    tsux.dispatch();
-
-    tsux.end();
-  }
-
-  return 0;
-}
 ```
+
 
 ### Variables
 
