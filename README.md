@@ -3,7 +3,7 @@ Tsux
 *C++ library for FCGI C/C++ web application*
 
 ## Introduction
-Tsux is a library designed to make C++ web application (it's means the application stay alive between two requests) in a simple way.
+Tsux is a library designed to made C++ web application (it's means the application stay alive between two requests) in a simple way.
 
 Tsux is based on FastCGI (especially libfcgi and libfcgi++) and try to be simple as possible.
 
@@ -232,7 +232,7 @@ int main(int argc, char** argv){
 
 ### Module
 
-Modules let you manage your code and memory. They also have tsux shortcuts.
+Modules let you manage your routes and data. They also have tsux shortcuts.
 
 #### Module definition
 
@@ -284,7 +284,7 @@ Use tsux
 MyModule* mymodule = (MyModule*)tsux.module("mymodule");
 ```
 
-Or just use a parameter to your module constructor
+Or just use a parameter into the module constructor
 ```cpp
   MyModule mymodule(tsux);
   MyOtherModule myothermodule(tsux, mymodule);
@@ -296,7 +296,7 @@ Do whatever you want.
 
 The template system is actually very simple. 
 
-#### Template use
+#### Template usage
 ```cpp
 Template tpl;
 
