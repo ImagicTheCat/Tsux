@@ -336,3 +336,49 @@ tsux.response << tpl.render();
 ```
 
 All the characters between {{ and }} will be a part of the identifier (also space)
+
+### Miscellaneous
+
+#### Cookies
+
+Create a cookie
+```cpp
+//time in seconds
+int time = 60;
+
+tsux.createCookie("name", "data", time);
+```
+
+Delete a cookie
+```cpp
+//just set the living time to 0
+tsux.createCookie("name", "", 0);
+```
+
+#### URI tools
+```cpp
+std::string uri;
+std::string encoded = URI::encode(uri);
+std::string decoded = URI::decode(encoded);
+```
+
+#### Dir tools
+
+```cpp
+//list recursively files of path/ directory
+std::vector<std::string> list;
+int options = Dir::SFILE | Dir::RECURSIVE;
+Dir::explode("path/", list, options);
+
+//example list content
+// "path/dir/file.png"
+// "path/file.jpg"
+```
+
+Options
+* SFILE: list files
+* SDIR: list directories
+* SPARENT: list parent directories (. and ..)
+* RECURSIVE: do it recursively
+
+**Warning** : do not use SPARENT and RECURSIVE, cause of infinite loop
