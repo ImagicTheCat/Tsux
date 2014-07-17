@@ -232,7 +232,7 @@ int main(int argc, char** argv){
 
 ### Module
 
-Modules let you manage your code and memory and have tsux shortcuts.
+Modules let you manage your code and memory and they have tsux shortcuts.
 
 #### Module definition
 
@@ -269,10 +269,25 @@ void MyModule::myroute(){
 
 Just instanciate the module with tsux and whatever you want before listening request
 ```cpp
-  MyModule(tsux);
+  MyModule mymodule(tsux);
 
   while(tsux.accept()){
     tsux.dispatch();
     tsux.end();
   }
 ```
+
+#### Get a loaded module
+
+Use tsux
+```cpp
+MyModule* mymodule = (MyModule*)tsux.module("mymodule");
+```
+
+Or just use a parameter to your module constructor
+```cpp
+  MyModule mymodule(tsux);
+  MyOtherModule myothermodule(tsux, mymodule);
+```
+
+Do whatever you want.
