@@ -232,7 +232,7 @@ int main(int argc, char** argv){
 
 ### Module
 
-Modules let you manage your code and memory and they have tsux shortcuts.
+Modules let you manage your code and memory. They also have tsux shortcuts.
 
 #### Module definition
 
@@ -303,16 +303,16 @@ Template tpl;
 //load from memory
 tpl.data = "<html>{{content}}</html>";
 
-//load from file
+//or load from file
 tpl.loadFromFile("mytemplate.html.tpl");
 
 //compile the template
 tpl.compile();
 
-//set data with string
+//set data string
 tpl.set("content", "mycontent");
 
-//or with string pointer (linked data)
+//or set data string pointer (linked data)
 std::string mycontent = "mycontent";
 tpl.set("content", &mycontent);
 
@@ -343,7 +343,7 @@ All the characters between {{ and }} will be a part of the identifier (also spa
 
 Create a cookie
 ```cpp
-//time in seconds
+//life time in seconds
 int time = 60;
 
 tsux.createCookie("name", "data", time);
@@ -351,7 +351,7 @@ tsux.createCookie("name", "data", time);
 
 Delete a cookie
 ```cpp
-//just set the living time to 0
+//just set the life time to 0
 tsux.createCookie("name", "", 0);
 ```
 
@@ -381,4 +381,17 @@ Options
 * SPARENT: list parent directories (. and ..)
 * RECURSIVE: do it recursively
 
-**Warning** : do not use SPARENT and RECURSIVE, cause of infinite loop
+**Warning** : do not use SPARENT and RECURSIVE, cause infinite loop
+
+#### MIME Types
+```cpp
+std::string mimetype;
+
+//get a mime type by extension, filename or path
+mimetype = MIMEType::get("css");
+mimetype = MIMEType::get("filename.css");
+mimetype = MIMEType::get("foo/bar/filename.css");
+
+//force a mimetype
+MIMEType::set("css", "text/plain");
+```
