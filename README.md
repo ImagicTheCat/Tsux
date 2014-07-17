@@ -81,29 +81,11 @@ int main(int argc, char** argv){
 
 You can give data to the callback
 ```cpp
-#include <tsux/Tsux.hpp>
-
-//callback function of /my/route
-void myroute(Tsux& tsux, void *data){
-  //unreference data with a default object
-  //or other method
-  std::string default_str;
-  std::string& str = Tsux::ref(data, default_str); //return an alias to default_str 
-                                                   //if data is NULL
-                                                   //return alias to the data if not
-
-  tsux.header.set("Content-Type", "text/plain");
-  tsux.response << "You are on /my/route";
-
-  //each request will change data
-  str += "NEW REQUEST\n";
-  tsux.response << "\n" << str;
-}
   std::string data;
   tsux.bind("/my/route", myroute, &data);
 ```
 
-and unreference it
+and unreference it in the callback
 ```cpp
   std::string default_str;
   std::string& str = Tsux::ref(data, default_str); //return alias to default_str if data is NULL
