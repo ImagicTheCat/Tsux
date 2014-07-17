@@ -357,7 +357,7 @@ tsux.createCookie("name", "", 0);
 
 #### URI tools
 ```cpp
-std::string uri;
+std::string uri = "post data or uri";
 std::string encoded = URI::encode(uri);
 std::string decoded = URI::decode(encoded);
 ```
@@ -370,7 +370,7 @@ std::vector<std::string> list;
 int options = Dir::SFILE | Dir::RECURSIVE;
 Dir::explode("path/", list, options);
 
-//example list content
+//list example content
 // "path/dir/file.png"
 // "path/file.jpg"
 ```
