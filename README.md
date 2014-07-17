@@ -392,7 +392,7 @@ mimetype = MIMEType::get("css");
 mimetype = MIMEType::get("filename.css");
 mimetype = MIMEType::get("foo/bar/filename.css");
 
-//force a mimetype
+//set a mimetype (owerwrite in this case)
 MIMEType::set("css", "text/plain");
 ```
 
