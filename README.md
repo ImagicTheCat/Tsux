@@ -397,4 +397,6 @@ MIMEType::set("css", "text/plain");
 ```
 
 ## About
-Tsux is written by ImagicTheCat, a very lazy developer who can't understand complexity. The library is under the MIT licence and based on FastCGI. I hope you will enjoy it and made awesome C++ website !
+Tsux is written by ImagicTheCat, a very lazy developer who can't understand complexity. The library is under the MIT licence and based on FastCGI. 
+
+Enjoy it and make awesome C++ website !
