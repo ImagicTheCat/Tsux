@@ -32,7 +32,7 @@ Tsux don't have the goal to implement current web technologies, but to let you t
 
 ## Installation
 ### Requirements
-You need the FastCGI library. Under a linux distribution like debian you will find the `libfcgi-dev` package. It's `fcgi` under Archlinux.
+You need the FastCGI library. Under a linux distribution like debian you will find the `libfcgi-dev` package. And `fcgi` under Archlinux.
 
 ### Compilation
 For the moment, Tsux don't have version or package.
