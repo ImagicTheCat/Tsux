@@ -32,8 +32,12 @@ struct TemplatePart{
 
 class Template{
   public:
+    ~Template();
+
     //compile the data string into a template flux
     void compile();
+
+    void clear();
 
     //render the template : write string internally for performance
     std::string& render();
@@ -52,7 +56,7 @@ class Template{
     std::map<std::string, unsigned int> params;
 
     //parts
-    std::vector<TemplatePart> flux;
+    std::vector<TemplatePart*> flux;
 };
 
 #endif

@@ -9,10 +9,13 @@
 
 #include "Template.hpp"
 
+Template::~Template(){
+  clear();
+}
+
 void Template::compile(){
   //init
-  params.clear();
-  flux.clear();
+  clear();
 
   const int NONE = 0;
   const int PREVAR = 1;
@@ -30,7 +33,7 @@ void Template::compile(){
       if(c == '{'){
         if(tmp.size() > 0){
           //add new plain data to the flux
-          flux.push_back(TemplatePart(tmp));
+          flux.push_back(new TemplatePart(tmp));
           tmp.clear();
         }
 
@@ -46,7 +49,7 @@ void Template::compile(){
           tmp += "{";
 
         if(tmp.size() > 0)
-          flux.push_back(TemplatePart(tmp));
+          flux.push_back(new TemplatePart(tmp));
       }
     }
     else if(mode == PREVAR){
@@ -69,8 +72,17 @@ void Template::compile(){
     else if(mode == SUFVAR){
       if(c == '}'){
         //add var
-        flux.push_back(TemplatePart(""));
-        params.insert(std::pair<std::string, unsigned int>(tmp, flux.size()-1));
+        //check existence of this parameter
+        std::map<std::string, unsigned int>::iterator it = params.find(tmp);
+        if(it != params.end())
+          flux.push_back(flux[it->second]); //build a link
+        else{
+          //add a parameter
+          flux.push_back(new TemplatePart(""));
+          params.insert(std::pair<std::string, unsigned int>(tmp, flux.size()-1));
+        }
+
+
         tmp.clear();
         mode = NONE;
       }
@@ -86,10 +98,10 @@ void Template::compile(){
 std::string& Template::render(){
   rendered_data.clear();
   for(int i = 0; i < flux.size(); i++){
-    if(flux[i].type == TemplatePart::PLAIN)
-      rendered_data.append(flux[i].plain);
-    else if(flux[i].type == TemplatePart::POINTER)
-      rendered_data.append(*(flux[i].pointer));
+    if(flux[i]->type == TemplatePart::PLAIN)
+      rendered_data.append(flux[i]->plain);
+    else if(flux[i]->type == TemplatePart::POINTER)
+      rendered_data.append(*(flux[i]->pointer));
   }
 
   return rendered_data;
@@ -98,16 +110,16 @@ std::string& Template::render(){
 void Template::set(const std::string& name, const std::string& data){
   std::map<std::string, unsigned int>::iterator it = params.find(name);
   if(it != params.end()){
-    flux[it->second].type = TemplatePart::PLAIN;
-    flux[it->second].plain = data;
+    flux[it->second]->type = TemplatePart::PLAIN;
+    flux[it->second]->plain = data;
   }
 }
 
 void Template::set(const std::string& name, std::string* data){
   std::map<std::string, unsigned int>::iterator it = params.find(name);
   if(it != params.end()){
-    flux[it->second].type = TemplatePart::POINTER;
-    flux[it->second].pointer = data;
+    flux[it->second]->type = TemplatePart::POINTER;
+    flux[it->second]->pointer = data;
   }
 }
 
@@ -125,4 +137,9 @@ bool Template::loadFromFile(const std::string& path){
     return false;
 }
 
-
+void Template::clear(){
+  params.clear();
+  for(int i = 0; i < flux.size(); i++)
+    delete flux[i];
+  flux.clear();
+}

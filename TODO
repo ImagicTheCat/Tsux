@@ -1,4 +1,6 @@
+- a great example
 - session system (tsuxid)
-- great example
-- template (idea)
+- template tsux render in flux
 - html entities
+- json parsing
+- hexadecimal encoding
