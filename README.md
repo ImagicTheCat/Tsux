@@ -23,6 +23,51 @@ Tsux is based on FastCGI (especially libfcgi and libfcgi++) and try to be simple
 
 Tsux don't have the goal to implement current web technologies, but to let you the capacity to build simple website in C++.
 
+## Installation
+### Requirements
+You will need the FastCGI library. Under a linux distribution like debian you will find the `libfcgi-dev` package (or `fcgi` under Archlinux).
+
+### Compilation
+For the moment, Tsux don't have version or package.
+
+Compile :
+```bash
+$ git clone https://github.com/ImagicTheCat/Tsux
+$ make
+```
+
+Install to /usr/local/lib :
+```bash
+$ sudo make install
+```
+
+## Configuration
+The configuration is the same of all FastCGI applications, but Tsux must have some Webserver paramaters to work correctly :
+* REQUEST_URI
+* HTTP_COOKIE
+* REMOTE_ADDR
+* CONTENT_TYPE
+* CONTENT_LENGTH
+
+### Nginx
+An example of a simple configuration with nginx
+```
+server{
+  listen  80;
+  server_name localhost;
+  
+  location /{
+    fastcgi_pass 127.0.0.1:8000;
+    include      fastcgi_params;
+  }
+}
+```
+
+You will probably need `spawn-fcgi` to launch your application :
+```bash
+spawn-fcgi -n myapp -p 8000
+```
+
 ## Tutorials
 ### Simple main
 ```cpp

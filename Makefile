@@ -9,8 +9,8 @@ clean:
 	rm $(OBJ)
 
 install:
+	mkdir -p /usr/local/include/tsux /usr/local/lib
 	mv $(TARGET) /usr/local/lib
-	mkdir -p /usr/local/include/tsux
 	cp src/*.hpp /usr/local/include/tsux
 
 Tsux.o: src/Tsux.cpp src/Tsux.hpp
@@ -42,3 +42,5 @@ Module.o: src/Module.cpp src/Module.hpp
 
 Template.o: src/Template.cpp src/Template.hpp
 	g++ -c src/Template.cpp $(OPT)
+
+.PHONY: install clean all
