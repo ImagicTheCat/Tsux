@@ -5,7 +5,7 @@ Tsux
 ## Introduction
 Tsux is a library designed to made C++ web application (it's means the application stay alive between two requests) in a simple way.
 
-Tsux is based on [FastCGI](www.fastcgi.com) (especially libfcgi and libfcgi++) and try to be simple as possible.
+Tsux is based on [FastCGI](http://www.fastcgi.com) (especially libfcgi and libfcgi++) and try to be simple as possible.
 
 **Features:**
 * usage of C++ stream to write HTTP response
