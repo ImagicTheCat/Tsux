@@ -23,6 +23,13 @@ Tsux is based on FastCGI (especially libfcgi and libfcgi++) and try to be simple
 
 Tsux don't have the goal to implement current web technologies, but to let you the capacity to build simple website in C++.
 
+**Advantages:**
+* Simple
+* The FastCGI advantages
+
+**Inconvenients:**
+* Don't handle huge files or stream
+
 ## Installation
 ### Requirements
 You need the FastCGI library. Under a linux distribution like debian you will find the `libfcgi-dev` package. It's `fcgi` under Archlinux.
@@ -63,7 +70,7 @@ server{
 }
 ```
 
-All the requests will be send to the application. Read the nginx manual for an advanced configuration (for example, if you want deserve static files outside the app).
+All the requests will be send to the application. Read the nginx manual for an advanced configuration (for example, if you want to deserve static files outside the app).
 
 ## Launch
 You will probably need `spawn-fcgi` to launch your application :
