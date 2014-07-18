@@ -25,7 +25,7 @@ Tsux don't have the goal to implement current web technologies, but to let you t
 
 ## Installation
 ### Requirements
-You will need the FastCGI library. Under a linux distribution like debian you will find the `libfcgi-dev` package (or `fcgi` under Archlinux).
+You need the FastCGI library. Under a linux distribution like debian you will find the `libfcgi-dev` package. It's `fcgi` under Archlinux.
 
 ### Compilation
 For the moment, Tsux don't have version or package.
@@ -63,6 +63,9 @@ server{
 }
 ```
 
+All the requests will be send to the application. Read the nginx manual for an advanced configuration (for example, if you want deserve static files outside the app).
+
+## Launch
 You will probably need `spawn-fcgi` to launch your application :
 ```bash
 spawn-fcgi -n myapp -p 8000
