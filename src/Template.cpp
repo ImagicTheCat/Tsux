@@ -46,7 +46,7 @@ void Template::compile(){
       if(i == data.size()-1){
         //don't forget the '{' of a final declaration begin
         if(mode == PREVAR)
-          tmp += "{";
+          tmp += '{';
 
         if(tmp.size() > 0)
           flux.push_back(new TemplatePart(tmp));
@@ -60,7 +60,8 @@ void Template::compile(){
 
         //ignore var and go back to plain data
         //don't forget the prev '{'
-        tmp += "{"+c;
+        tmp += '{';
+        tmp += c;
       }
     }
     else if(mode == VAR){
@@ -88,7 +89,8 @@ void Template::compile(){
       }
       else{
         //go back to plain data
-        tmp += "}"+c;
+        tmp += '}';
+        tmp += c;
         mode = NONE;
       }
     }

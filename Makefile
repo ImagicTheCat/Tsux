@@ -1,5 +1,5 @@
 OPT=-Wall -shared -fPIC -g
-OBJ=Tsux.o ParamSet.o FileSet.o Action.o Regex.o URI.o Dir.o MIMEType.o Module.o Template.o
+OBJ=Tsux.o ParamSet.o FileSet.o Action.o Regex.o URI.o Dir.o MIMEType.o Module.o Template.o Base.o
 TARGET=libtsux.so
 
 all: $(OBJ)
@@ -42,5 +42,8 @@ Module.o: src/Module.cpp src/Module.hpp
 
 Template.o: src/Template.cpp src/Template.hpp
 	g++ -c src/Template.cpp $(OPT)
+
+Base.o: src/Base.cpp src/Base.hpp
+	g++ -c src/Base.cpp $(OPT)
 
 .PHONY: install clean all
