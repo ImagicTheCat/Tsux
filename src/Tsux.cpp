@@ -109,7 +109,7 @@ bool Tsux::accept(){
 
       in.read(data, length);
 
-      parseURICouples(std::string(data),post);
+      parseURICouples(std::string(data, length),post);
     }
     else if(param.get("CONTENT_TYPE","").find("multipart/form-data") != std::string::npos)
       parseMIMEData();
