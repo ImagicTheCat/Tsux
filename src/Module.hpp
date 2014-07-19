@@ -31,6 +31,9 @@ class Module{
     void generate(ParamSet set){ tsux.generate(set); }
     void generate(FileSet set){ tsux.generate(set); }
 
+    //misc
+    Module* module(const std::string& name){ return tsux.module(name); }
+
     //accessors
     const std::string& uri()const{ return tsux.uri(); }
     const std::string& location()const{ return tsux.location(); }
