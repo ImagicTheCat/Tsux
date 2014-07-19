@@ -352,8 +352,9 @@ Do whatever you want.
 The template system is actually very simple. 
 
 #### Template usage
-```cpp #include <tsux/Template.hpp> ```
 ```cpp
+#include <tsux/Template.hpp> 
+
 Template tpl;
 
 //load from memory
@@ -419,8 +420,9 @@ std::string decoded = URI::decode(encoded);
 ```
 
 #### Dir tools
-```cpp #include <tsux/Dir.hpp> ```
 ```cpp
+#include <tsux/Dir.hpp> 
+
 //list recursively files of path/ directory
 std::vector<std::string> list;
 int options = Dir::SFILE | Dir::RECURSIVE;
@@ -440,8 +442,9 @@ Options
 **Warning** : do not use SPARENT and RECURSIVE, cause infinite loop
 
 #### MIME Types
-```cpp #include <tsux/MIMEType.hpp> ```
 ```cpp
+#include <tsux/MIMEType.hpp> 
+
 std::string mimetype;
 
 //get a mime type by extension, filename or path
@@ -454,7 +457,9 @@ MIMEType::set("css", "text/plain");
 ```
 
 #### Base encoding
-```cpp #include <tsux/Base.hpp> ```
+```cpp 
+#include <tsux/Base.hpp> 
+```
 
 ## About
 Tsux is written by ImagicTheCat, a very lazy developer who can't understand complexity. The library is under the MIT licence and based on FastCGI. 
