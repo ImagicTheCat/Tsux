@@ -458,7 +458,8 @@ MIMEType::set("css", "text/plain");
 
 #### Base encoder/decoder
 Tsux have a class to encode and decode data into a string with a custom alphabet.
-Use it carefully if you want to send the encoded data accross the network and decode it on another computer (differences in encoding, for example int can be 2 or 4 octets).
+
+**Warning** : Use it carefully if you want to send the encoded data accross the network and decode it on another computer (there are differences in data encoding, for example `int` can be 2 or 4 bytes).
 
 ```cpp 
 #include <tsux/Base.hpp> 
