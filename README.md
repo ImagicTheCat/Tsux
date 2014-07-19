@@ -456,9 +456,31 @@ mimetype = MIMEType::get("foo/bar/filename.css");
 MIMEType::set("css", "text/plain");
 ```
 
-#### Base encoding
+#### Base encoder/decoder
+Tsux have a class to encode and decode data into a string with a custom alphabet.
+
 ```cpp 
 #include <tsux/Base.hpp> 
+
+//a base62 alphabet
+std::string alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+int var = 42;
+int decoded = 0;
+
+//encoding
+std::string encoded = Base::encode(&var, sizeof(int), alphabet);
+//decoding
+Base::decode(&var, sizeof(int), encoded, alphabet);
+//decoded int equal 42
+
+//same with string
+//encoding
+std::string data = "mydata";
+encoded = Base::encode(data.c_str(), data.size()+1, alphabet);
+//decoding
+char sdecoded[256];
+Base::decode(sdecoded, 256, alphabet);
 ```
 
 ## About
