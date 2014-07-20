@@ -1,6 +1,8 @@
-![Tsux](https://raw.githubusercontent.com/ImagicTheCat/Tsux/master/resources/logo/logo300.png)
+![alt text](https://raw.githubusercontent.com/ImagicTheCat/Tsux/master/resources/logo/logo300.png "Tsux")
 
 *C++ library for FCGI C/C++ web application*
+
+[Introduction](#introduction)
 
 ## Introduction
 Tsux is a library designed to made C++ web application (it's means the application stay alive between two requests) in a simple way.
