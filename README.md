@@ -11,7 +11,7 @@
 * [Launch](#launch)
 * [Tutorials](#tutorials)
   * [Simple main](#simple-main)
-  * [Routing](#routin)
+  * [Routing](#routing)
   * [Variables](#variables)
   * [Module](#module)
   * [Template](#template)
