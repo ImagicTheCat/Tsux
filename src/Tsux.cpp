@@ -90,7 +90,7 @@ bool Tsux::accept(){
     }
 
 
-    //build location and get
+    //build location and get vars
     _uri = param.get("REQUEST_URI","");
     size_t sp1 = _uri.find("?");
 
@@ -101,6 +101,40 @@ bool Tsux::accept(){
       std::string gets = _uri.substr(sp1+1);
       parseURICouples(gets, get);
     }
+
+    //search locale
+    std::string lname, lvalue;
+    ParamSet lopts;
+    parseMIMEField("field: "+param.get("HTTP_ACCEPT_LANGUAGE",";"), lname, lvalue, lopts);
+    //parse languages
+    std::vector<std::string> langs;
+    std::string tmp="";
+    int min = 1000;
+    int imin = -1;
+    for(int i = 0; i < lvalue.size(); i++){
+      const char& c = lvalue[i];
+      bool end = (i == lvalue.size()-1);
+
+      if(c == ',' || end){
+        if(end && c != ' ')
+          tmp += c;
+
+        if(tmp.size() != 0){
+          if(tmp.size() < min){
+            min = tmp.size();
+            imin = langs.size();
+          }
+
+          langs.push_back(tmp);
+          tmp = "";
+        }
+      }
+      else if(c != ' ')
+        tmp += c;
+    }
+
+    if(imin != -1)
+      _locale = langs[imin];
 
     //post vars
     if(param.get("CONTENT_TYPE","") == "application/x-www-form-urlencoded"){

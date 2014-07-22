@@ -67,6 +67,9 @@ class Tsux{
     const std::string& uri()const{ return _uri; }
     const std::string& location()const{ return _location; }
 
+    const std::string& locale()const{ return _locale; }
+    void locale(const std::string& loc){ _locale = loc; }
+
     //streams
     std::ostream out;
     std::istream in;
@@ -102,7 +105,7 @@ class Tsux{
     FCGX_Request request;
     fcgi_streambuf *sin, *sout, *serr;
 
-    std::string _uri, _location;
+    std::string _uri, _location, _locale;
 
     //modules
     std::map<std::string, Module*> modules;

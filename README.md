@@ -72,6 +72,7 @@ The configuration is the same of all FastCGI applications, but Tsux must have so
 * REMOTE_ADDR
 * CONTENT_TYPE
 * CONTENT_LENGTH
+* HTTP_ACCEPT_LANGUAGE
 
 ### Nginx
 An example of a simple configuration with nginx
