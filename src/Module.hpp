@@ -38,6 +38,9 @@ class Module{
     const std::string& uri()const{ return tsux.uri(); }
     const std::string& location()const{ return tsux.location(); }
 
+    const std::string& locale()const{ return tsux.locale(); }
+    void locale(const std::string& loc){ tsux.locale(loc); }
+
     //streams
     std::ostream& out;
     std::istream& in;
