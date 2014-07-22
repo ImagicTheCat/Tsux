@@ -13,6 +13,12 @@ Template::~Template(){
   clear();
 }
 
+
+void Template::compile(Translator& tr){
+  translator = &tr;
+  compile();
+}
+
 void Template::compile(){
   //init
   clear();
@@ -78,8 +84,12 @@ void Template::compile(){
         if(it != params.end())
           flux.push_back(flux[it->second]); //build a link
         else{
-          //add a parameter
-          flux.push_back(new TemplatePart(""));
+          //check if a translation is possible
+          if(translator != NULL && translator->hasTrans(tmp))
+            flux.push_back(new TemplatePart(translator, tmp));
+          else //add parameter
+            flux.push_back(new TemplatePart(""));
+
           params.insert(std::pair<std::string, unsigned int>(tmp, flux.size()-1));
         }
 
@@ -104,6 +114,8 @@ std::string& Template::render(){
       rendered_data.append(flux[i]->plain);
     else if(flux[i]->type == TemplatePart::POINTER)
       rendered_data.append(*(flux[i]->pointer));
+    else if(flux[i]->type == TemplatePart::TRANSLATION)
+      rendered_data.append(translator->trans(flux[i]->plain));
   }
 
   return rendered_data;

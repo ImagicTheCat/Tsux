@@ -22,6 +22,7 @@ class Translator{
     bool loadFromFile(const std::string& path);
 
     bool has(const std::string& path);
+    bool hasTrans(const std::string& path);
 
     //if not found, return the path
     const std::string& get(const std::string& path);

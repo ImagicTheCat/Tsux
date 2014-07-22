@@ -15,15 +15,19 @@
 #include <map>
 #include <vector>
 
+#include "Translator.hpp"
+
 //handle pointer and plain data
 struct TemplatePart{
   enum{
-    POINTER,
-    PLAIN
+    POINTER = 0,
+    PLAIN = 1,
+    TRANSLATION = 2
   };
 
   TemplatePart(const std::string& data):type(PLAIN), plain(data){}
   TemplatePart(std::string* data): type(POINTER), pointer(data){}
+  TemplatePart(Translator* tr, const std::string& name): type(TRANSLATION), plain(name){}
 
   std::string plain;
   std::string* pointer;
@@ -32,10 +36,14 @@ struct TemplatePart{
 
 class Template{
   public:
+    Template():translator(NULL){}
     ~Template();
 
     //compile the data string into a template flux
     void compile();
+
+    //compile with a translator
+    void compile(Translator& tr);
 
     void clear();
 
@@ -57,6 +65,9 @@ class Template{
 
     //parts
     std::vector<TemplatePart*> flux;
+
+    //translator
+    Translator* translator;
 };
 
 #endif

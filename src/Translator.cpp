@@ -96,6 +96,30 @@ const std::string& Translator::get(const std::string& path){
     return path;
 }
 
+
+bool Translator::hasTrans(const std::string& path){
+  //build path
+  std::vector<std::string> cpath;
+  buildPath(path, cpath);
+
+  //check all first domain of translation
+  std::map<std::string, TranslatorGroup*>::iterator it = root.els.begin();
+  while(it != root.els.end()){
+    //explode groups
+    TranslatorGroup* current = it->second;
+    int i = 0;
+    while(current != NULL && i < cpath.size()){
+      current = current->get(cpath[i]);
+      i++;
+    }
+
+    return (cpath.size() && current != NULL && current->els.size() > 0
+        && current->els.begin()->second == NULL);
+  }
+
+  return false;
+}
+
 std::string Translator::trans(const std::string& path){
   if(has(locale+"."+path))
     return get(locale+"."+path);
