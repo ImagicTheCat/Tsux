@@ -20,6 +20,12 @@ class Module{
     Module(Tsux& tsux, const std::string& name);
     ~Module();
 
+    //accessors
+    const std::string& name()const{ return _name; }
+
+
+
+  protected:
     /* Interface to tsux */
     //time in seconds
     void createCookie(const std::string& name, const std::string& data, int time){
@@ -57,11 +63,9 @@ class Module{
       tsux.bind(path, Action((ModAction)action, this));
     }
 
-    //accessors
-    const std::string& name()const{ return _name; }
+    Tsux& tsux;
 
   private:
-    Tsux& tsux;
     std::string _name;
 };
 

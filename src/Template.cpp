@@ -107,18 +107,17 @@ void Template::compile(){
   }
 }
 
-std::string& Template::render(){
-  rendered_data.clear();
+void Template::render(Tsux& tsux){
   for(int i = 0; i < flux.size(); i++){
     if(flux[i]->type == TemplatePart::PLAIN)
-      rendered_data.append(flux[i]->plain);
+      tsux.response << flux[i]->plain;
     else if(flux[i]->type == TemplatePart::POINTER)
-      rendered_data.append(*(flux[i]->pointer));
+      tsux.response << (*(flux[i]->pointer));
     else if(flux[i]->type == TemplatePart::TRANSLATION)
-      rendered_data.append(translator->trans(flux[i]->plain));
+      tsux.response << translator->trans(flux[i]->plain);
+    else if(flux[i]->type == TemplatePart::ACTION)
+      flux[i]->action.execute(tsux);
   }
-
-  return rendered_data;
 }
 
 void Template::set(const std::string& name, const std::string& data){
@@ -134,6 +133,14 @@ void Template::set(const std::string& name, std::string* data){
   if(it != params.end()){
     flux[it->second]->type = TemplatePart::POINTER;
     flux[it->second]->pointer = data;
+  }
+}
+
+void Template::set(const std::string& name, TsuxAction act, void* data){
+  std::map<std::string, unsigned int>::iterator it = params.find(name);
+  if(it != params.end()){
+    flux[it->second]->type = TemplatePart::ACTION;
+    flux[it->second]->action = Action(act, data);
   }
 }
 

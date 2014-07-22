@@ -25,6 +25,7 @@ struct Action{
 
   Action(TsuxAction action, void* _data);
   Action(ModAction maction, Module* module);
+  Action(){}
 
   //Tsux
   TsuxAction action;
