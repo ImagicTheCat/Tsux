@@ -202,7 +202,6 @@ void Translator::parse(const std::string& data){
       //new value, go back to id mode
       if(c == '\n'){
         set(path+id, tmp);
-        std::cout << "set [" << path+id << "] = " << tmp <<std::endl;
         tmp ="";
         mode = ID;
       }
