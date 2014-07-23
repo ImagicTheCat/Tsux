@@ -12,6 +12,8 @@
 #include <iostream>
 #include <sstream>
 #include <fcgio.h>
+#include <ctime>
+#include <cstdlib>
 
 #include "ParamSet.hpp"
 #include "Action.hpp"
@@ -19,13 +21,15 @@
 #include "URI.hpp"
 #include "FileSet.hpp"
 #include "MIMEType.hpp"
+#include "Base.hpp"
 
 
 class Tsux{
   public:
     //options
     enum{
-      REGEX_ROUTING = 1
+      REGEX_ROUTING = 1,
+      SESSION = 2
     };
 
 
@@ -45,6 +49,18 @@ class Tsux{
     void unregisterModule(const std::string& name);
     //get module by name, if not found return NULL
     Module* module(const std::string& name);
+
+    /* session management */
+    void registerSessionListener(Module* module){ session_modules.push_back(module); }
+    void bindSessionCreate(void (*f)(const std::string&)){ f_session_create = f; }
+    void bindSessionDelete(void (*f)(const std::string&)){ f_session_delete = f; }
+
+    void setSessionTime(unsigned int time){ session_time = time; }
+    unsigned int getSessionTime(){ return session_time; }
+
+    const std::string& ssid(){ return _ssid; }
+
+
 
 
     //eval possible routes
@@ -100,6 +116,16 @@ class Tsux{
     void initBufs();
     void parseMIMEData();
 
+    //session
+    std::string generateSSID();
+    bool checkSSID(const std::string& ssid);
+    void createSession();
+    void deleteSession(std::map<std::string, unsigned long int>::iterator it);
+    void checkSessions();
+    unsigned long int check_timer;
+    //time between two sessions check
+    int check_timer_interval;
+
     std::stringstream header_stream;
 
     FCGX_Request request;
@@ -107,8 +133,21 @@ class Tsux{
 
     std::string _uri, _location, _locale;
 
+    //session
+    std::string _ssid, ssid_alpha;
+
+
     //modules
     std::map<std::string, Module*> modules;
+
+    //sessions
+    //ssid and start time
+    std::map<std::string, unsigned long int> sessions;
+    //listener
+    std::vector<Module*> session_modules;
+    //global 
+    void (*f_session_create)(const std::string&);
+    void (*f_session_delete)(const std::string&);
 
     //simple routes
     std::map<std::string, Action> routes;
@@ -116,6 +155,8 @@ class Tsux{
     //regex routes
     std::vector<Regex*> regs;
     std::vector<Action> actions;
+
+    unsigned int session_time;
 
     unsigned int options;
 

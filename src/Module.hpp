@@ -16,14 +16,22 @@
 
 class Module{
   public:
+    //options
+    enum{
+      SESSION = 1
+    };
+
     //the name need to be unique
-    Module(Tsux& tsux, const std::string& name);
+    Module(Tsux& tsux, const std::string& name, unsigned int options = 0);
     ~Module();
 
     //accessors
     const std::string& name()const{ return _name; }
 
-
+    /* Session events */
+    virtual void onSessionCreate(const std::string& ssid){}
+    virtual void onSessionDelete(const std::string& ssid){}
+ 
 
   protected:
     /* Interface to tsux */
@@ -46,6 +54,7 @@ class Module{
 
     const std::string& locale()const{ return tsux.locale(); }
     void locale(const std::string& loc){ tsux.locale(loc); }
+    const std::string& ssid(){ return tsux.ssid(); }
 
     //streams
     std::ostream& out;
@@ -57,6 +66,7 @@ class Module{
     ParamSet &post, &get, &header, &route, &param, &cookie;
     FileSet &file;
     
+   
     /* Module */
     //bind action for this module
     template<typename T> void bind(const std::string& path, void (T::*action)(void)){
@@ -66,6 +76,7 @@ class Module{
     Tsux& tsux;
 
   private:
+    unsigned int options;
     std::string _name;
 };
 

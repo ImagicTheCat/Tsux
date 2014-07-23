@@ -7,16 +7,26 @@
 
 
 #include "Tsux.hpp"
+#include "Module.hpp"
 
 Tsux::Tsux():in(std::cin.rdbuf()),
              out(std::cout.rdbuf()),
              err(std::cerr.rdbuf()),
              sin(NULL),sout(NULL),serr(NULL),
-             options(0), flushed(true){
+             options(0), flushed(true),
+             session_time(60),
+             f_session_create(NULL),
+             f_session_delete(NULL),
+             check_timer_interval(60){
+  
+  srand(time(NULL));
+  check_timer = time(NULL);
+
   FCGX_Init();
   FCGX_InitRequest(&request, 0,0);
 
   MIMEType::init();
+  ssid_alpha = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 }
 
 Tsux::~Tsux(){
@@ -151,6 +161,47 @@ bool Tsux::accept(){
     //cookies
     std::string cname, cvalue;
     parseMIMEField("Cookie: value; "+param.get("HTTP_COOKIE", ""), cname, cvalue, cookie);
+
+    //session
+    if(enabled(SESSION)){
+      _ssid = "";
+
+      std::map<std::string, unsigned long int>::iterator it = sessions.find(cookie.get("SSID",""));
+      unsigned long int current_time = time(NULL);
+      if(it != sessions.end() && it->first != ""){
+        //session exist
+        if(current_time > it->second + session_time){
+          //session expire
+          deleteSession(it);
+          createSession();
+        }
+        else{
+          //check session
+          if(checkSSID(it->first)){
+            //valid session
+            //reupdate time
+            it->second = current_time;
+            //set the global ssid
+            _ssid = it->first;
+          }
+          else{
+            //invalid session
+            //delete cookie
+            createCookie("SSID","",0);
+          }
+        }
+      }
+      else{
+        //new session
+        createSession();
+      }
+
+      //check sessions by interval
+      if(current_time >= check_timer+check_timer_interval){
+        checkSessions();
+        check_timer = current_time;
+      }
+    }
   }
 
   return ok;
@@ -193,8 +244,15 @@ void Tsux::registerModule(const std::string& name, Module* module){
 
 void Tsux::unregisterModule(const std::string& name){
   std::map<std::string, Module*>::iterator it = modules.find(name);
-  if(it != modules.end())
-      modules.erase(it);
+  if(it != modules.end()){
+    //find in session listener and erase
+    std::vector<Module*>::iterator it_s = std::find(session_modules.begin(), session_modules.end(), it->second);
+   if(it_s != session_modules.end())
+    session_modules.erase(it_s); 
+
+    //erase from modules
+    modules.erase(it);
+  }
 }
 
 Module* Tsux::module(const std::string& name){
@@ -560,7 +618,115 @@ void Tsux::parseMIMEField(const std::string& field, std::string& name, std::stri
 void Tsux::createCookie(const std::string& name, const std::string& data, int time){
   if(name.size() >= 0 && time >= 0 && name.size() < 100 && data.size() < 100){
     header_stream << "Set-Cookie: " << URI::encode(name) << "=" << URI::encode(data) << ";"
+                  << " Path=/;"
                   << " Max-Age=" << time << "\r\n";
+  }
+}
+
+std::string Tsux::generateSSID(){
+  //IP | TIME AND RAND
+  //4  1  4        4
+  
+  //convert string ip to unsigned char[4]
+  unsigned char ip[4];
+  int shift = 0;
+  std::string sip = param.get("REMOTE_ADDR", "127.0.0.1");
+  std::string tmp;
+  for(int i = 0; i < sip.size(); i++){
+    const char& c = sip[i];
+    bool end = (i == sip.size()-1);
+
+    if(c == '.' || end){
+      if(end)
+        tmp += c;
+
+      std::stringstream ss;
+      ss << tmp;
+      int val;
+      ss >> val;
+      ip[shift] = val;
+      shift++;
+      shift %= 4;
+
+      tmp.clear();
+    }
+    else
+      tmp += c;
+  }
+
+  //encode ip
+  std::string eip = Base::encode(ip, 4, ssid_alpha);
+
+  //generate random param
+  unsigned long int random = time(NULL)+rand();
+  std::string erandom = Base::encode(&random, sizeof(random), ssid_alpha);
+
+  return eip+"|"+erandom;
+}
+
+bool Tsux::checkSSID(const std::string& ssid){
+  //split at '|' to get the ip part
+  std::string pip;
+  int i = 0;
+  while(i < ssid.size() && ssid[i] != '|'){
+    pip += ssid[i];
+    i++;
+  }
+
+  unsigned char ip[4];
+
+  //decode ip
+  Base::decode(ip, 4, pip, ssid_alpha);
+
+  std::string sip;
+  for(i = 0; i < 4; i++){
+    std::stringstream ss;
+    ss << (int)ip[i];
+    sip += ss.str();
+    if(i != 3)
+      sip += '.';
+  }
+
+  return (param.get("REMOTE_ADDR","") == sip);
+}
+
+void Tsux::createSession(){
+  //new session
+  unsigned long int current_time = time(NULL);
+
+  std::string ssid = generateSSID();
+  sessions.insert(std::pair<std::string, unsigned long int>(ssid, current_time));
+  createCookie("SSID", ssid, session_time);
+  _ssid = ssid;
+
+  //events
+  if(f_session_create != NULL)
+    f_session_create(ssid);
+
+  for(int i = 0; i < session_modules.size(); i++)
+    session_modules[i]->onSessionCreate(ssid);
+}
+
+
+void Tsux::deleteSession(std::map<std::string, unsigned long int>::iterator it){
+  //events
+  if(f_session_delete != NULL)
+    f_session_delete(it->first);
+
+  for(int i = 0; i < session_modules.size(); i++)
+    session_modules[i]->onSessionDelete(it->first);
+
+  sessions.erase(it);
+}
+
+void Tsux::checkSessions(){
+  //delete sessions expired
+  unsigned long int current_time = time(NULL);
+  std::map<std::string, unsigned long int>::iterator it = sessions.begin();
+  while(it != sessions.end()){
+    if(current_time > it->second+session_time)
+      deleteSession(it);
+    it++;
   }
 }
 
