@@ -186,8 +186,7 @@ bool Tsux::accept(){
           }
           else{
             //invalid session
-            //delete cookie
-            createCookie("SSID","",0);
+            createSession();
           }
         }
       }
