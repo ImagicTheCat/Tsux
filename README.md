@@ -389,22 +389,22 @@ Or just use a parameter into the module constructor
 Do whatever you want.
 
 ### Sessions [&uarr;](#table-of-content)
-Tsux sessions are like PHP sessions, a cookie is created to identify unique users. Tsux don't store data, just an unique string id (ssid), but you can bind functions for two events :
+Tsux sessions are like PHP sessions, a cookie is created to identify the users. Tsux don't store data, just an unique string id (ssid), but you can bind functions for two events :
 * when a session is created
 * when a session is deleted
 
-Enable sessions with `tsux.enable(Tsux::SESSION)`.
+First enable sessions with `tsux.enable(Tsux::SESSION)`.
 
 Bind global function
 ```cpp
-void create(const std::string& ssid){
+void mycreate(const std::string& ssid){
 }
 
-void delete(const std::string& ssid){
+void mydelete(const std::string& ssid){
 }
 
-tsux.bindSessionCreate(create);
-tsux.bindSessionDelete(delete);
+tsux.bindSessionCreate(mycreate);
+tsux.bindSessionDelete(mydelete);
 ```
 
 Better way with module :
@@ -413,6 +413,15 @@ Better way with module :
 MyModule::MyModule(Tsux& tsux): 
   Module(tsux, "mymodule", SESSION){ //add SESSION to module options
 }
+
+Get the ssid for a request
+```cpp
+//global
+tsux.ssid();
+
+//in module
+ssid();
+```
 
 //implement onSessionCreate and onSessionDelete functions
 void MyModule::onSessionCreate(const std::string& ssid){
