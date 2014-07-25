@@ -61,7 +61,8 @@ class Tsux{
     const std::string& ssid(){ return _ssid; }
 
 
-
+    //rewrite route
+    void rewrite(const std::string& route);
 
     //eval possible routes
     void dispatch();
@@ -82,6 +83,7 @@ class Tsux{
     //accessors
     const std::string& uri()const{ return _uri; }
     const std::string& location()const{ return _location; }
+    const std::string& path()const{ return _path; }
 
     const std::string& locale()const{ return _locale; }
     void locale(const std::string& loc){ _locale = loc; }
@@ -131,7 +133,7 @@ class Tsux{
     FCGX_Request request;
     fcgi_streambuf *sin, *sout, *serr;
 
-    std::string _uri, _location, _locale;
+    std::string _uri, _location, _locale, _path;
 
     //session
     std::string _ssid, ssid_alpha;
@@ -155,6 +157,7 @@ class Tsux{
     //regex routes
     std::vector<Regex*> regs;
     std::vector<Action> actions;
+    int route_locked;
 
     unsigned int session_time;
 

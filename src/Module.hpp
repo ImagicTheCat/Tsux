@@ -40,6 +40,8 @@ class Module{
       tsux.createCookie(name, data, time);
     }
 
+    void rewrite(const std::string& route){ tsux.rewrite(route); }
+
     //generate html : 404, etc
     void generate(int code){ tsux.generate(code); }
     void generate(ParamSet set){ tsux.generate(set); }
@@ -51,6 +53,7 @@ class Module{
     //accessors
     const std::string& uri()const{ return tsux.uri(); }
     const std::string& location()const{ return tsux.location(); }
+    const std::string& path()const{ return tsux.path(); }
 
     const std::string& locale()const{ return tsux.locale(); }
     void locale(const std::string& loc){ tsux.locale(loc); }

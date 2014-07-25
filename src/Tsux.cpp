@@ -17,7 +17,8 @@ Tsux::Tsux():in(std::cin.rdbuf()),
              session_time(60),
              f_session_create(NULL),
              f_session_delete(NULL),
-             check_timer_interval(60){
+             check_timer_interval(60),
+             route_locked(-1){
   
   srand(time(NULL));
   check_timer = time(NULL);
@@ -74,6 +75,7 @@ bool Tsux::accept(){
   bool ok = FCGX_Accept_r(&request) == 0;
 
   if(ok){
+    route_locked = -1;
     initBufs();
 
     //webserver params
@@ -105,6 +107,7 @@ bool Tsux::accept(){
     size_t sp1 = _uri.find("?");
 
     _location = _uri.substr(0, sp1);
+    _path = _location;
 
     //gets vars
     if(sp1 != std::string::npos){
@@ -263,6 +266,11 @@ Module* Tsux::module(const std::string& name){
 }
 
 
+void Tsux::rewrite(const std::string& route){
+  _path = route;
+  dispatch();
+}
+
 void Tsux::dispatch(){
   //find route
   if(enabled(REGEX_ROUTING)){
@@ -271,7 +279,8 @@ void Tsux::dispatch(){
     int i = 0;
     bool done = false;
     while(!done && i < regs.size()){
-      if(regs[i]->match(_location)){
+      //check if the route is locked before (prevent infinite rewriting)
+      if(i != route_locked && regs[i]->match(_path)){
         //set route params
         std::vector<std::string>& params = regs[i]->getMatchs();
         for(int j = 0; j < params.size(); j++){
@@ -280,6 +289,9 @@ void Tsux::dispatch(){
 
           route.set(ss.str(), params[j]);
         }
+
+        //lock the route
+        route_locked = i;
 
         //execute
         actions[i].execute(*this);
@@ -293,7 +305,7 @@ void Tsux::dispatch(){
   }
   else{
     //simple routing
-    std::map<std::string, Action>::iterator it = routes.find(_location);
+    std::map<std::string, Action>::iterator it = routes.find(_path);
     if(it != routes.end())
       it->second.execute(*this);
     else
