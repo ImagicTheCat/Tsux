@@ -113,8 +113,11 @@ bool Translator::hasTrans(const std::string& path){
       i++;
     }
 
-    return (i == cpath.size() && current != NULL && current->els.size() > 0
-        && current->els.begin()->second == NULL);
+    if(i == cpath.size() && current != NULL && current->els.size() > 0
+        && current->els.begin()->second == NULL)
+      return true;
+
+    it++;
   }
 
   return false;
