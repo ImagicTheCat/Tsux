@@ -15,6 +15,7 @@
   * [Routing](#routing-)
   * [Variables](#variables-)
   * [Module](#module-)
+  * [Sessions](#sessions-)
   * [Template](#template-)
   * [Translator](#translator-)
   * [Miscellaneous](#miscellaneous-)
@@ -386,6 +387,43 @@ Or just use a parameter into the module constructor
 ```
 
 Do whatever you want.
+
+### Sessions [&uarr;](#table-of-content)
+Tsux sessions are like PHP sessions, a cookie is created to identify unique users. Tsux don't store data, just an unique string id (ssid), but you can bind functions for two events :
+* when a session is created
+* when a session is deleted
+
+Enable sessions with `tsux.enable(Tsux::SESSION)`.
+
+Bind global function
+```cpp
+void create(const std::string& ssid){
+}
+
+void delete(const std::string& ssid){
+}
+
+tsux.bindSessionCreate(create);
+tsux.bindSessionDelete(delete);
+```
+
+Better way with module :
+```cpp
+//listen sessions events
+MyModule::MyModule(Tsux& tsux): 
+  Module(tsux, "mymodule", SESSION){ //add SESSION to module options
+}
+
+//implement onSessionCreate and onSessionDelete functions
+void MyModule::onSessionCreate(const std::string& ssid){
+  //ex: add id into a std::map with you're data structure
+}
+
+void MyModule::onSessionDelete(const std::string& ssid){
+  //ex: delete id from the std::map
+}
+
+```
 
 ### Template [&uarr;](#table-of-content)
 
