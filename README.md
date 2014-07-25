@@ -15,6 +15,7 @@
   * [Variables](#variables)
   * [Module](#module)
   * [Template](#template)
+  * [Translator](#translator)
   * [Miscellaneous](#miscellaneous)
 * [About](#about)
 
@@ -193,7 +194,7 @@ And in the route callback
 ```
 
 #### Route rewriting
-You can rewrite route to do internal redirection (for an administration, maintenance or language domains).
+You can rewrite route for internal redirection (ex: administration, maintenance or language specific pages).
 ```cpp
 //in tsux action function
 tsux.rewrite("/newroute/foo/bar");
