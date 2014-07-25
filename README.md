@@ -416,7 +416,7 @@ MyModule::MyModule(Tsux& tsux):
 
 //implement onSessionCreate and onSessionDelete functions
 void MyModule::onSessionCreate(const std::string& ssid){
-  //ex: add id into a std::map with you're data structure
+  //ex: add id into a std::map with a data structure
 }
 
 void MyModule::onSessionDelete(const std::string& ssid){
@@ -434,6 +434,7 @@ tsux.ssid();
 ssid();
 ```
 
+Set the session time with `tsux.setSessionTime(600)` (in seconds, 10 minutes this case)
 
 
 ### Template [&uarr;](#table-of-content)
