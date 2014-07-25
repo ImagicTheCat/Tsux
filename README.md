@@ -413,16 +413,6 @@ Better way with module :
 MyModule::MyModule(Tsux& tsux): 
   Module(tsux, "mymodule", SESSION){ //add SESSION to module options
 }
-```
-
-Get the ssid for a request
-```cpp
-//global
-tsux.ssid();
-
-//in module
-ssid();
-```
 
 //implement onSessionCreate and onSessionDelete functions
 void MyModule::onSessionCreate(const std::string& ssid){
@@ -434,6 +424,17 @@ void MyModule::onSessionDelete(const std::string& ssid){
 }
 
 ```
+
+Get the ssid for a request
+```cpp
+//global
+tsux.ssid();
+
+//in module
+ssid();
+```
+
+
 
 ### Template [&uarr;](#table-of-content)
 
