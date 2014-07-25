@@ -192,6 +192,16 @@ And in the route callback
   tsux.reponse << tsux.route.get("1", "");
 ```
 
+#### Route rewriting
+You can rewrite route to do internal redirection (for an administration, maintenance or language domains).
+```cpp
+//in tsux action function
+tsux.rewrite("/newroute/foo/bar");
+
+//or in a module action function (shortcut)
+rewrite("/newroute/foo/bar");
+```
+The new route will be executed. Strange behaviour can happend if you continue to use Tsux in the current action function after a rewrite call, so, follow the rewrite function by a `return;` instruction if you don't know exatly what you are doing.
 
 ### Variables
 

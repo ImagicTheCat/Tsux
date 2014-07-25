@@ -282,6 +282,7 @@ void Tsux::dispatch(){
       //check if the route is locked before (prevent infinite rewriting)
       if(i != route_locked && regs[i]->match(_path)){
         //set route params
+        route.clear();
         std::vector<std::string>& params = regs[i]->getMatchs();
         for(int j = 0; j < params.size(); j++){
           std::stringstream ss;
