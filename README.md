@@ -434,7 +434,7 @@ tsux.ssid();
 ssid();
 ```
 
-Set the session time with `tsux.setSessionTime(600)` (in seconds, 10 minutes this case)
+Set the session time with `tsux.setSessionTime(600)` (in seconds, 10 minutes in this case)
 
 
 ### Template [&uarr;](#table-of-content)
