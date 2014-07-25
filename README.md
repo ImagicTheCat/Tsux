@@ -413,6 +413,7 @@ Better way with module :
 MyModule::MyModule(Tsux& tsux): 
   Module(tsux, "mymodule", SESSION){ //add SESSION to module options
 }
+```
 
 Get the ssid for a request
 ```cpp
