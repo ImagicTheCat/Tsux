@@ -37,6 +37,9 @@ Tsux is based on [FastCGI](http://www.fastcgi.com) (especially libfcgi and libfc
 * simple template system
 * mimetypes matching
 * regex, dirent encapsulations and easy file loading
+* base encoder/decoder
+* an experimental translator system
+* a session system
 
 Tsux don't have the goal to implement current web technologies, but to let you the capacity to build simple website in C++.
 
@@ -215,10 +218,13 @@ std::string ip = tsux.param.get("REMOTE_ADDR","");
 tsux.header.set("Content-Type", "image/png");
 
 //uri
-tsux.uri(); //also contain get vars
+tsux.uri(); //complete uri(get couples included)
 
 //location
-tsux.location(); //the matched route only
+tsux.location(); //the location in the client url
+
+//path
+tsux.path(); //the matched route, different of location after a route rewriting
 
 //set a var for this request
 tsux.post.set("number", 5);
@@ -387,9 +393,16 @@ tpl.compile();
 //set data string
 tpl.set("content", "mycontent");
 
-//or set data string pointer (linked data)
+//set data string pointer (linked data)
 std::string mycontent = "mycontent";
 tpl.set("content", &mycontent);
+
+//set a tsux function
+void myfunc(Tsux& tsux, void* data);
+tpl.set("content", myfunc, mydata);
+
+//set a module function
+tpl.set("content", &MyMod::myfunc, &mymod);
 
 //render the template
 tsux.response << tpl.render();
@@ -411,6 +424,79 @@ tsux.response << tpl.render();
 ```
 
 All the characters between {{ and }} will be a part of the identifier (also space)
+
+### Translator
+#### Translator notation
+The translator work with simple files in a specific format.
+Each line can be a new group, or a new value. A new group is just an idented identifier, and a value an indented identifier plus a "=" followed by a value (any characters to the end of line).
+Identations can be done with tabulations `\t` or spaces `\n` but keep one behaviour for prevent strange problems.
+
+The root groups are the locales, except `all` which define a value for all the languages.
+
+```
+all 
+  domain=http://mydomain.com
+
+en
+  index
+    content
+      msg=Welcome !
+      msg2=It's bigger in the inside
+    content2
+      msg=ect...
+  menu
+    first=First
+fr
+  index
+    content
+      msg=Bienvenue !
+      msg2=C'est plus grand à l'intérieur
+    content2
+      msg=ect...
+  menu
+    first=Premier
+```
+
+#### Translator usage
+
+```cpp
+Translator tr;
+
+//translator file loading
+tr.load("from memory");
+
+tr.loadFromFile("translations/fr");
+//load a file don't replace the previous : addition
+tr.loadFromFile("translations/en");
+
+//test full path
+if(tr.has("en.index.content.msg"))
+  tr.get("en.index.content.msg");
+
+//set the locale
+tr.setLocale("en");
+
+//test relative path (with the locale, also check all group)
+if(tr.hasTrans("index.content.msg"))
+  tr.trans("index.content.msg");
+
+//set a value by full path
+tr.set("all.domain", "http://mydomain.com");
+```
+
+#### Use translator with templates
+Just compile your template with the translator, after translations loading. Adding new translations will not work in the template after the compilation.
+```cpp
+tpl.compile(tr);
+```
+
+In the template
+```html
+<body>
+  {{index.content.msg}}
+  <br />{{index.content.msg2}}
+</body>
+```
 
 ### Miscellaneous
 
