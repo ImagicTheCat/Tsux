@@ -52,11 +52,11 @@ Tsux don't have the goal to implement current web technologies, but to let you t
 **Inconvenients:**
 * Don't handle huge files or stream
 
-## Installation
-### Requirements
+## Installation [&uarr;](#table-of-content)
+### Requirements [&uarr;](#table-of-content)
 You need the FastCGI library. Under a linux distribution like debian you will find the `libfcgi-dev` package. And `fcgi` under Archlinux.
 
-### Compilation
+### Compilation [&uarr;](#table-of-content)
 For the moment, Tsux don't have version or package.
 
 Compile :
@@ -70,7 +70,7 @@ Install to /usr/local/lib :
 $ sudo make install
 ```
 
-## Configuration
+## Configuration [&uarr;](#table-of-content)
 The configuration is the same of all FastCGI applications, but Tsux must have some Webserver paramaters to work correctly :
 * REQUEST_URI
 * HTTP_COOKIE
@@ -79,7 +79,7 @@ The configuration is the same of all FastCGI applications, but Tsux must have so
 * CONTENT_LENGTH
 * HTTP_ACCEPT_LANGUAGE
 
-### Nginx
+### Nginx [&uarr;](#table-of-content)
 An example of a simple configuration with nginx
 ```
 server{
@@ -95,14 +95,14 @@ server{
 
 All the requests will be send to the application. Read the nginx manual for an advanced configuration (for example, if you want to deserve static files outside the app).
 
-## Launch
+## Launch [&uarr;](#table-of-content)
 You will probably need `spawn-fcgi` to launch your application :
 ```bash
 spawn-fcgi -n myapp -p 8000
 ```
 
-## Tutorials
-### Simple main
+## Tutorials [&uarr;](#table-of-content)
+### Simple main [&uarr;](#table-of-content)
 ```cpp
 #include <tsux/Tsux.hpp>
 
@@ -127,7 +127,7 @@ int main(int argc, char** argv){
 }
 ```
 
-### Routing
+### Routing [&uarr;](#table-of-content)
 
 #### Simple routing
 ```cpp
@@ -205,7 +205,7 @@ rewrite("/newroute/foo/bar");
 ```
 The new route will be executed. Strange behaviour can happend if you continue to use Tsux in the current action function after a rewrite call, so, follow the rewrite function by a `return;` instruction if you don't know exatly what you are doing.
 
-### Variables
+### Variables [&uarr;](#table-of-content)
 
 #### Variable sets and others
 ```cpp
@@ -264,7 +264,7 @@ tsux.response << file.data; //data
 std::cout << file.name << " sended." << std::endl; //the filename
 ```
 
-### Load and send file to client
+### Load and send file to client [&uarr;](#table-of-content)
 *a little file manager*
 
 **Warning** : FCGI and Tsux aren't good to send huge files cause of memory issue (all the file is cached before sending the request). For huge files, use the webserver to send them.
@@ -321,7 +321,7 @@ int main(int argc, char** argv){
 }
 ```
 
-### Module
+### Module [&uarr;](#table-of-content)
 
 Modules let you manage your routes and data. They also have tsux shortcuts.
 
@@ -383,7 +383,7 @@ Or just use a parameter into the module constructor
 
 Do whatever you want.
 
-### Template
+### Template [&uarr;](#table-of-content)
 
 The template system is actually very simple. 
 
@@ -437,7 +437,7 @@ tsux.response << tpl.render();
 
 All the characters between {{ and }} will be a part of the identifier (also space)
 
-### Translator
+### Translator [&uarr;](#table-of-content)
 #### Translator notation
 The translator work with simple files in a specific format.
 Each line can be a new group, or a new value. A new group is just an indented identifier, and a value an indented identifier plus a "=" followed by a value (any characters until the end of line is reached).
@@ -508,7 +508,7 @@ In the template
 </body>
 ```
 
-### Miscellaneous
+### Miscellaneous [&uarr;](#table-of-content)
 
 #### Cookies
 
@@ -599,7 +599,7 @@ char sdecoded[256];
 Base::decode(sdecoded, 256, alphabet);
 ```
 
-## About
+## About [&uarr;](#table-of-content)
 Tsux is written by ImagicTheCat, a very lazy developer who can't understand complexity. The library is under the MIT licence and based on FastCGI. 
 
 I hope you will enjoy it and made awesome C++ websites !
