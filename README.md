@@ -238,6 +238,10 @@ tsux.location(); //the location in the client url
 //path
 tsux.path(); //the matched route, different of location after a route rewriting
 
+//locale
+//tsux look at the accepted languages in the request and find the first small country denomination
+tsux.locale();
+
 //set a var for this request
 tsux.post.set("number", 5);
 ```
