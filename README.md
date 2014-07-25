@@ -1,4 +1,4 @@
-![alt text](https://raw.githubusercontent.com/ImagicTheCat/Tsux/master/resources/logo/logo300.png "Tsux")
+# ![alt text](https://raw.githubusercontent.com/ImagicTheCat/Tsux/master/resources/logo/logo300.png "Tsux")
 
 *C++ library for FCGI C/C++ web application*
 
@@ -39,7 +39,7 @@ Tsux is based on [FastCGI](http://www.fastcgi.com) (especially libfcgi and libfc
 * mimetypes matching
 * regex, dirent encapsulations and easy file loading
 * base encoder/decoder
-* an experimental translator system
+* a translator system
 * a session system
 
 Tsux don't have the goal to implement current web technologies, but to let you the capacity to build simple website in C++.
@@ -409,7 +409,7 @@ std::string mycontent = "mycontent";
 tpl.set("content", &mycontent);
 
 //set a tsux function
-void myfunc(Tsux& tsux, void* data);
+//prototype: void myfunc(Tsux& tsux, void* data);
 tpl.set("content", myfunc, mydata);
 
 //set a module function
