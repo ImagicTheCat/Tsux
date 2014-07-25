@@ -471,7 +471,7 @@ tpl.set("content", myfunc, mydata);
 tpl.set("content", &MyMod::myfunc, &mymod);
 
 //render the template
-tsux.response << tpl.render();
+tpl.render(tsux);
 ```
 
 #### Template notation
