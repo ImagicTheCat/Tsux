@@ -71,7 +71,7 @@ bool Translator::has(const std::string& path){
     i++;
   }
 
-  return (cpath.size() && current != NULL && current->els.size() > 0
+  return (i == cpath.size() && current != NULL && current->els.size() > 0
       && current->els.begin()->second == NULL);
 }
 
@@ -89,7 +89,7 @@ const std::string& Translator::get(const std::string& path){
   }
 
   //search the value
-  if(cpath.size() && current != NULL && current->els.size() > 0 
+  if(i == cpath.size() && current != NULL && current->els.size() > 0 
       && current->els.begin()->second == NULL)
     return current->els.begin()->first;
   else
@@ -113,7 +113,7 @@ bool Translator::hasTrans(const std::string& path){
       i++;
     }
 
-    return (cpath.size() && current != NULL && current->els.size() > 0
+    return (i == cpath.size() && current != NULL && current->els.size() > 0
         && current->els.begin()->second == NULL);
   }
 
