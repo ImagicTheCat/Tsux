@@ -428,10 +428,10 @@ All the characters between {{ and }} will be a part of the identifier (also spa
 ### Translator
 #### Translator notation
 The translator work with simple files in a specific format.
-Each line can be a new group, or a new value. A new group is just an idented identifier, and a value an indented identifier plus a "=" followed by a value (any characters to the end of line).
-Identations can be done with tabulations `\t` or spaces `\n` but keep one behaviour for prevent strange problems.
+Each line can be a new group, or a new value. A new group is just an indented identifier, and a value an indented identifier plus a "=" followed by a value (any characters until the end of line is reached).
+Identations can be done with tabulations or spaces, but keep one behaviour for prevent strange problems.
 
-The root groups are the locales, except `all` which define a value for all the languages.
+The groups at the root level are the locales, except `all` which define values for all languages.
 
 ```
 all 
@@ -441,7 +441,7 @@ en
   index
     content
       msg=Welcome !
-      msg2=It's bigger in the inside
+      msg2=It's bigger on the inside
     content2
       msg=ect...
   menu
@@ -462,30 +462,28 @@ fr
 ```cpp
 Translator tr;
 
-//translator file loading
+//loading file or data don't erase previously loaded translations
 tr.load("from memory");
-
 tr.loadFromFile("translations/fr");
-//load a file don't replace the previous : addition
 tr.loadFromFile("translations/en");
-
-//test full path
-if(tr.has("en.index.content.msg"))
-  tr.get("en.index.content.msg");
 
 //set the locale
 tr.setLocale("en");
 
+//test full path
+if(tr.has("en.index.content.msg"))
+  std::string translation = tr.get("en.index.content.msg");
+
 //test relative path (with the locale, also check all group)
 if(tr.hasTrans("index.content.msg"))
-  tr.trans("index.content.msg");
+  std::string translation = tr.trans("index.content.msg");
 
 //set a value by full path
 tr.set("all.domain", "http://mydomain.com");
 ```
 
 #### Use translator with templates
-Just compile your template with the translator, after translations loading. Adding new translations will not work in the template after the compilation.
+Just compile your template with the translator, when all the translations are loaded. Adding new translations after the compilation will not affect the template.
 ```cpp
 tpl.compile(tr);
 ```
