@@ -3,6 +3,7 @@
   <head>
     <title>{{global.title}}</title>
     <link rel="stylesheet" type="text/css" href="/static/css/main.css">
+    <script type="text/javascript" src="/static/js/jquery-1.11.1.min.js"></script>
   </head>
 
   <body>

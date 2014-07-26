@@ -150,7 +150,7 @@ bool Tsux::accept(){
       _locale = langs[imin];
 
     //post vars
-    if(param.get("CONTENT_TYPE","") == "application/x-www-form-urlencoded"){
+    if(param.get("CONTENT_TYPE","").find("application/x-www-form-urlencoded") != std::string::npos){
       int length = param.get("CONTENT_LENGTH", 0);
       char data[length];
 

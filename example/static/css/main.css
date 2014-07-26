@@ -113,3 +113,9 @@ a{
   padding-bottom: 10px;
   text-transform: uppercase;
 }
+
+#messages{
+  height: 300px;
+  border: 1px solid black;
+  overflow: auto;
+}

@@ -7,6 +7,7 @@ int main(int argc, char** argv){
   Tsux tsux;
 
   tsux.enable(Tsux::REGEX_ROUTING);
+  tsux.enable(Tsux::SESSION);
 
   mMain main(tsux);
   mChat chat(tsux);
