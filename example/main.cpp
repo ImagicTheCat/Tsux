@@ -1,100 +1,20 @@
 
 #include <tsux/Tsux.hpp>
-#include <tsux/Dir.hpp>
-#include <tsux/MIMEType.hpp>
-
-#include "MainMod.hpp"
-
-void header(Tsux& tsux, const std::string& title="Title", const std::string& subtitle="subtitle"){
-  tsux.response << "<!DOCTYPE html>"
-                << "<html><head><title>" << title << "</title>"
-                << "<link href=\"/file/style.css\" rel=\"stylesheet\" type=\"text/css\">"
-                << "</head>"
-                << "<body><div id=\"header\">"
-                << "<h1>" << title << "</h1>"
-                << "<p>" << subtitle << "</p>"
-                << "</div><div id=\"content\">";
-}
-
-void footer(Tsux& tsux, const std::string& text){
-  tsux.response << "</div><div id=\"footer\">"
-                << text
-                << "</div></body></html>";
-}
-
-void get_file(Tsux& tsux, void* data){
-  FileSet def;
-  FileSet& files = Tsux::ref(data, def);
-
-  if(files.has(tsux.route.get("1", ""))){
-    File def;
-    File& file = files.get(tsux.route.get("1",""), def);
-    tsux.header.set("Content-Type", file.type);
-    tsux.response << file.data;
-  }
-  else
-    tsux.generate(404);
-}
-
-void index(Tsux& tsux, void* data){
-  header(tsux, "Index", "index page");
-  
-  tsux.response << "<p>This is an example page</p>"
-                << "<a href=\"dump\">dump data</a>";
-
-  footer(tsux, "footer");
-}
-
-void dump(Tsux& tsux, void* data){
-  header(tsux, "Dump", "dump data");
-
-  tsux.response << "<a href=\"/\">index</a>";
-
-  tsux.response << "<h2>PARAM</h2>";
-  tsux.generate(tsux.param);
-
-  tsux.response << "<h2>GET</h2>";
-  tsux.generate(tsux.get);
-
-  tsux.response << "<h2>POST</h2>";
-  tsux.generate(tsux.post);
-
-  tsux.response << "<h2>FILE</h2>";
-  tsux.generate(tsux.file);
-
-  tsux.response << "<h2>COOKIE</h2>";
-  tsux.generate(tsux.cookie);
-
-  if(tsux.cookie.has("mon_cookie"))
-    tsux.createCookie("mon_cookie", "", 0);
-  else
-    tsux.createCookie("mon_cookie", "blabla\"+([", 60);
-
-
-  footer(tsux, "footer");
-}
+#include "mMain.hpp"
+#include "mChat.hpp"
 
 int main(int argc, char** argv){
   Tsux tsux;
 
-  FileSet files;
-
-  std::vector<std::string> list;
-  Dir::explode("file/", list, Dir::SFILE | Dir::RECURSIVE);
-  for(int i = 0; i < list.size(); i++){
-    File& f = files.alloc(list[i].substr(5));
-    f.loadFromFile(list[i]);
-  }
-
   tsux.enable(Tsux::REGEX_ROUTING);
 
-  tsux.bind("^/file/(.+)$", get_file, &files);
-  tsux.bind("^/$", index);
-  tsux.bind("^/dump$", dump);
-
-  MainMod main(tsux);
+  mMain main(tsux);
+  mChat chat(tsux);
 
   while(tsux.accept()){
+    //default content type
+    tsux.header.set("Content-Type", "text/html");
+
     tsux.dispatch();
     tsux.end();
   }

@@ -1,0 +1,7 @@
+all
+  global
+    title=Tsux Website
+  menu
+    index=Index
+    chat=Chat
+    github=GitHub
