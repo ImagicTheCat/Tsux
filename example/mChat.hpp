@@ -25,6 +25,7 @@ class mChat : public Module{
     void r_index();
     void r_send();
     void r_list();
+    void r_logout();
 
     /* GEN */
     void v_chat();

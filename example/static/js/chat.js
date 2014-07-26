@@ -17,9 +17,11 @@ window.onload = function(){
 
   send.click(function(){
     $.post("/ajax/chat/send", {message: msg.val()}).done(function(data){
+      msg.val("");
       update();
     });
   });
 
+  update();
   setInterval(update, 2500);
 }

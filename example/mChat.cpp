@@ -8,6 +8,7 @@ mChat::mChat(Tsux& tsux):
     bind("^/chat$", &mChat::r_index);
     bind("^/ajax/chat/send", &mChat::r_send);
     bind("^/ajax/chat/list", &mChat::r_list);
+    bind("^/chat/logout", &mChat::r_logout);
 
     //modules
     main = (mMain*)module("main");
@@ -51,7 +52,8 @@ void mChat::r_send(){
     Message msg;
     msg.pseudo = it->second.pseudo;
     msg.content = post.get("message","");
-    messages.push_back(msg);
+    if(msg.content != "")
+      messages.push_back(msg);
   }
 }
 
@@ -63,6 +65,16 @@ void mChat::r_list(){
       response << messages[i].pseudo << " : " << messages[i].content << "\n";
     it->second.cursor = messages.size();
   }
+}
+
+void mChat::r_logout(){
+  std::map<std::string, User>::iterator it = users.find(ssid());
+  if(it != users.end() && it->second.logged){
+    it->second.logged = false;
+    it->second.cursor = 0;
+  }
+
+  header.set("Location", "/chat");
 }
 
 /* GEN */
