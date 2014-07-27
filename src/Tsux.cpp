@@ -355,6 +355,7 @@ void Tsux::end(){
     header.clear();
     file.clear();
     cookie.clear();
+    param.clear();
 
     response.clear();
     response.str("");

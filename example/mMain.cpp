@@ -8,6 +8,7 @@ mMain::mMain(Tsux& tsux) :
   bind("^(.*)$", &mMain::s_locale);
   bind("^/$", &mMain::r_index);
   bind("^/static/(.*)$", &mMain::r_file);
+  bind("^/info$", &mMain::r_info);
 
   //translations
   tr.loadFromFile("main/translations/all");
@@ -62,6 +63,10 @@ void mMain::r_file(){
 
 void mMain::r_index(){
   t_index.render(tsux);
+}
+
+void mMain::r_info(){
+  generate(param);
 }
 
 /* SUPER ROUTES */

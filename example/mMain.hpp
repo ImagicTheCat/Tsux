@@ -12,6 +12,7 @@ class mMain : public Module{
     //routes
     void r_file();
     void r_index();
+    void r_info();
 
     //super routes
     void s_locale();
