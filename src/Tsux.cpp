@@ -184,6 +184,9 @@ bool Tsux::accept(){
             //valid session
             //reupdate time
             it->second = current_time;
+            //update cookie
+            createCookie("SSID", it->first, session_time);
+
             //set the global ssid
             _ssid = it->first;
           }
