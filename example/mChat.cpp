@@ -83,7 +83,10 @@ void mChat::v_chat(){
   std::map<std::string, User>::iterator it = users.find(ssid());
   if(it != users.end() && it->second.logged){
     User& user = it->second;
-    //logged, display chat
+    //logged 
+    //set cursor to 0
+    user.cursor = 0;
+    //display chat
     t_chat.render(tsux);
   }
   else{
