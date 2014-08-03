@@ -195,6 +195,8 @@ And in the route callback
   tsux.reponse << tsux.route.get("1", "");
 ```
 
+Routes are evaluated in the bind call order. If a two routes have matched regex, the first will be executed.
+
 #### Route rewriting
 You can rewrite route for internal redirection (ex: administration, maintenance or language specific pages).
 ```cpp
