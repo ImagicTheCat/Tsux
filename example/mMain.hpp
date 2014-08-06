@@ -13,13 +13,13 @@ class mMain : public Module{
     void r_file();
     void r_index();
     void r_info();
+    void r_404();
 
     //super routes
     void s_locale();
 
     //generations (views?)
     void v_menu();
-    void v_404();
 
     //accessors
     Translator& translator(){ return tr; }
@@ -34,7 +34,7 @@ class mMain : public Module{
     std::map<std::string, std::string> menu;
 
     //templates
-    Template t_header, t_footer, t_menu_el;
+    Template t_header, t_footer, t_menu_el, t_404;
 };
 
 #endif

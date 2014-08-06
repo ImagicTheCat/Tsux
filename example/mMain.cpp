@@ -29,6 +29,10 @@ mMain::mMain(Tsux& tsux) :
   t_menu_el.loadFromFile("main/templates/menu_el.html.tpl");
   t_menu_el.compile(tr);
 
+  t_404.loadFromFile("main/templates/404.html.tpl");
+  t_404.compile();
+  t_404.herit(t_index);
+
   //build menu
   menu.insert(std::pair<std::string, std::string>("/","menu.index"));
   menu.insert(std::pair<std::string, std::string>("/chat","menu.chat"));
@@ -45,7 +49,7 @@ mMain::mMain(Tsux& tsux) :
   }
 
   //custom codes
-  //bindCode(404, &mMain::v_404);
+  bindCode(404, &mMain::r_404);
 }
 
 /* ROUTES */
@@ -64,6 +68,11 @@ void mMain::r_file(){
     generate(404);
 }
 
+void mMain::r_404(){
+  header.set("Status", "404 Not Found");
+  t_404.render(tsux);
+}
+
 void mMain::r_index(){
   t_index.render(tsux);
 }
@@ -80,13 +89,6 @@ void mMain::s_locale(){
 }
 
 /* GENERATIONS */
-
-void mMain::v_404(){
-  header.set("Content-Type", "text/html");
-  header.set("Status", "404 Not Found");
-
-  response << "Custom 404 page";
-}
 
 void mMain::v_menu(){
   for(std::map<std::string, std::string>::iterator it = menu.begin(); it != menu.end(); it++){

@@ -1,6 +1,11 @@
 all
   global
     title=Tsux Website
+    error
+      404
+        title=404 Not Found
+        message=The vortex have eat the targeted content, sorry.
+
   menu
     index=Index
     chat=Chat

@@ -133,6 +133,7 @@ void Config::parse(const std::string& data){
   int mode = ID;
   int prev_rank = 0;
   int rank = 0;
+  int tab = 0;
   bool ranked = false;
 
   std::vector<std::string> lifo;
@@ -162,10 +163,14 @@ void Config::parse(const std::string& data){
           }
           //go lower
           else if(rank < prev_rank){
-            if(lifo.size() > 0)
-              prev_id = lifo[lifo.size()-1];
-            path = path.substr(0, path.size()-prev_id.size()-1);
-            lifo.pop_back();
+            int diff = prev_rank-rank;
+            int n = diff/tab;
+            for(int j = 0; j < n; j++){
+              if(lifo.size() > 0)
+                prev_id = lifo[lifo.size()-1];
+              path = path.substr(0, path.size()-prev_id.size()-1);
+              lifo.pop_back();
+            }
           }
 
           if(mode == ID)
@@ -186,6 +191,11 @@ void Config::parse(const std::string& data){
       else{
         if(!ranked)
           ranked = true;
+
+        //define tab spaces fo this file
+        if(tab == 0)
+          tab = rank;
+
         tmp += c;
       }
     }
@@ -193,6 +203,7 @@ void Config::parse(const std::string& data){
       //new value, go back to id mode
       if(c == '\n'){
         set(path+id, tmp);
+        std::cout << "set " << path+id << " = " << tmp << std::endl;
         tmp ="";
         mode = ID;
       }
