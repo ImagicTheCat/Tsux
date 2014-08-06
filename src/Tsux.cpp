@@ -17,8 +17,7 @@ Tsux::Tsux():in(std::cin.rdbuf()),
              session_time(60),
              f_session_create(NULL),
              f_session_delete(NULL),
-             check_timer_interval(60),
-             route_locked(-1){
+             check_timer_interval(60){
   
   srand(time(NULL));
   check_timer = time(NULL);
@@ -78,7 +77,10 @@ bool Tsux::accept(){
   bool ok = FCGX_Accept_r(&request) == 0;
 
   if(ok){
-    route_locked = -1;
+    //reinit locks
+    for(int i = 0; i < locks.size(); i++)
+      locks[i] = false;
+
     initBufs();
 
     //webserver params
@@ -229,6 +231,7 @@ void Tsux::bind(const std::string& path, const Action& action){
     if(reg->isValid()){
       regs.push_back(reg);
       actions.push_back(action);
+      locks.push_back(false);
     }
   }
   //simple routing
@@ -286,7 +289,7 @@ void Tsux::dispatch(){
     bool done = false;
     while(!done && i < regs.size()){
       //check if the route is locked before (prevent infinite rewriting)
-      if(i != route_locked && regs[i]->match(_path)){
+      if(!locks[i] && regs[i]->match(_path)){
         //set route params
         route.clear();
         std::vector<std::string>& params = regs[i]->getMatchs();
@@ -298,7 +301,7 @@ void Tsux::dispatch(){
         }
 
         //lock the route
-        route_locked = i;
+        locks[i] = true;
 
         //execute
         actions[i].execute(*this);

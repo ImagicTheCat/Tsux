@@ -163,7 +163,7 @@ class Tsux{
     //regex routes
     std::vector<Regex*> regs;
     std::vector<Action> actions;
-    int route_locked;
+    std::vector<bool> locks;
 
     //code generations
     std::map<int, Action> codes;
