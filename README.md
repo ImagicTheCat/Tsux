@@ -618,7 +618,7 @@ In the template
 
 #### Custom error pages
 
-You can custom any error page like routes. For now, only 404 error is implemented by default.
+You can customize any error page like routes. For now, 404 error is the only one implemented by default.
 
 ```cpp
 //in a module
@@ -628,7 +628,7 @@ bindCode(404, &MyModule::my404);
 tsux.bindCode(404, my404, mydata);
 ```
 
-##### 404 example
+404 example
 
 ```cpp
 void MyModule::my404(){
@@ -639,7 +639,7 @@ void MyModule::my404(){
 }
 ```
 
-##### Generate
+Generate
 
 ```cpp
 void MyModule::myroute(){
@@ -653,7 +653,7 @@ void MyModule::myroute(){
 #### ParamSet and FileSet
 To debug your code, you can print `ParamSet` and `FileSet` structures to html.
 
-##### Example
+Example
 ```cpp
 void MyModule::debug(){
   response << "POST\n";
