@@ -473,9 +473,20 @@ tpl.set("content", myfunc, mydata);
 //set a module function
 tpl.set("content", &MyMod::myfunc, &mymod);
 
+//set another template
+tpl.set("header", header_tpl);
+
 //render the template
 tpl.render(tsux);
 ```
+
+#### Template herit
+```cpp
+  //after compilation
+  tpl.herit(another_tpl);
+```
+
+The template will herit of the possibles translations given by the parent translator and all identifiers. Multiple heritances possible.
 
 #### Template notation
 
@@ -569,7 +580,7 @@ In the template
 
 #### Custom error pages
 
-You can custom any error code page like a route.
+You can custom any error page like routes. For now, only 404 error is implemented by default.
 
 ```cpp
 //in a module
@@ -587,6 +598,17 @@ void MyModule::my404(){
   header.set("Status", "404 Not Found");
 
   response << "My 404 custom page.";
+}
+```
+
+Generate :
+
+```cpp
+void MyModule::myroute(){
+  if(post.get("password", "") != "mypassword")
+    generate(404); //or 403
+  else 
+    response << "hi admin !";
 }
 ```
 
