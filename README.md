@@ -17,6 +17,7 @@
   * [Module](#module-)
   * [Sessions](#sessions-)
   * [Template](#template-)
+  * [Config](#config-)
   * [Translator](#translator-)
   * [Generations](#generations-)
   * [Miscellaneous](#miscellaneous-)
@@ -507,12 +508,47 @@ The template will herit of the possibles translations given by the parent's tran
 
 All the characters between {{ and }} will be a part of the identifier (also space)
 
-### Translator [&uarr;](#table-of-content)
-#### Translator notation
-The translator work with simple files in a specific format.
+### Config [&uarr;](#table-of-content)
+Tsux have a simple parser for config files, only string based.
 Each line can be a new group, or a new value. A new group is just an indented identifier, and a value an indented identifier plus a "=" followed by a value (any characters until the end of line is reached).
 Identations can be done with tabulations or spaces, but keep one behaviour for prevent strange problems.
 
+#### Config notation
+```
+mysql
+  host=localhost
+  user=root
+  password=
+  db=database
+
+global
+  admin
+    password=mypassword
+  moderator
+    password=mypassword
+```
+
+#### Config usage
+```cpp
+Config conf;
+
+//loading file or data don't erase previously loaded elements
+conf.load("from memory");
+conf.loadFromFile("config/global.conf");
+
+
+//test full path
+if(conf.has("mysql.host"))
+  std::string host = conf.get("mysql.host");
+
+//set a value by full path
+conf.set("mysql.host", "mydomain.com");
+```
+
+
+### Translator [&uarr;](#table-of-content)
+#### Translator notation
+The translator work with like the config file notation.
 The groups at the root level are the locales, except `all` which define values for all languages.
 
 ```
