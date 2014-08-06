@@ -18,13 +18,16 @@
 #include "Translator.hpp"
 #include "Tsux.hpp"
 
+class Template;
+
 //handle pointer and plain data
 struct TemplatePart{
   enum{
     POINTER = 0,
     PLAIN = 1,
     TRANSLATION = 2,
-    ACTION = 3
+    ACTION = 3,
+    TEMPLATE = 4
   };
 
   //string and string pointer
@@ -37,6 +40,7 @@ struct TemplatePart{
   Action action;
   std::string plain;
   std::string* pointer;
+  Template* tpl;
   int type;
 };
 
@@ -74,6 +78,9 @@ class Template{
         flux[it->second]->action = Action((ModAction)act, module);
       }
     }
+
+    //template
+    void set(const std::string& name, Template *tpl);
 
     std::string data;
 

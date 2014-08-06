@@ -144,6 +144,14 @@ void Template::set(const std::string& name, TsuxAction act, void* data){
   }
 }
 
+void Template::set(const std::string& name, Template *tpl){
+  std::map<std::string, unsigned int>::iterator it = params.find(name);
+  if(it != params.end()){
+    flux[it->second]->type = TemplatePart::TEMPLATE;
+    flux[it->second]->tpl = tpl;
+  }
+}
+
 bool Template::loadFromFile(const std::string& path){
   std::ifstream file(path.c_str(), std::ios::binary);
   if(file){
