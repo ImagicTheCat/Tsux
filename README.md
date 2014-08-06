@@ -548,7 +548,7 @@ conf.set("mysql.host", "mydomain.com");
 
 ### Translator [&uarr;](#table-of-content)
 #### Translator notation
-The translator work with like the config file notation.
+The translator work with the config file notation.
 The groups at the root level are the locales, except `all` which define values for all languages.
 
 ```
