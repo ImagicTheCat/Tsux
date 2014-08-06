@@ -23,24 +23,30 @@ class Template;
 //handle pointer and plain data
 struct TemplatePart{
   enum{
-    POINTER = 0,
-    PLAIN = 1,
-    TRANSLATION = 2,
-    ACTION = 3,
-    TEMPLATE = 4
+    EMPTY = 0,
+    POINTER = 1,
+    PLAIN = 2,
+    TRANSLATION = 3,
+    ACTION = 4,
+    TEMPLATE = 5,
+    LINK = 6
   };
 
+  TemplatePart(Template* p): parent(p), type(EMPTY){}
+
   //string and string pointer
-  TemplatePart(const std::string& data):type(PLAIN), plain(data){}
-  TemplatePart(std::string* data): type(POINTER), pointer(data){}
+  TemplatePart(Template* p, const std::string& data):parent(p), type(PLAIN), plain(data){}
+  TemplatePart(Template* p, std::string* data): parent(p), type(POINTER), pointer(data){}
 
   //translator
-  TemplatePart(Translator* tr, const std::string& name): type(TRANSLATION), plain(name){}
+  TemplatePart(Template* p,Translator* tr, const std::string& name): parent(p), type(TRANSLATION), plain(name){}
 
   Action action;
   std::string plain;
   std::string* pointer;
   Template* tpl;
+  Template* parent;
+  TemplatePart* link;
   int type;
 };
 
@@ -55,10 +61,16 @@ class Template{
     //compile with a translator
     void compile(Translator& tr);
 
+    //herit identifiers from another template
+    void herit(Template& tpl);
+
     void clear();
 
     //render the template : write string internally for performance
     void render(Tsux& tsux);
+
+    //render a part
+    void render(Tsux& tsux, TemplatePart* part);
 
     //load file into the data string
     bool loadFromFile(const std::string& path);
@@ -80,7 +92,13 @@ class Template{
     }
 
     //template
-    void set(const std::string& name, Template *tpl);
+    void set(const std::string& name, Template& tpl);
+
+    //get part by name
+    TemplatePart* get(const std::string& name);
+
+    //resolve part name by part pointer
+    std::string getIdentifier(TemplatePart* part);
 
     std::string data;
 

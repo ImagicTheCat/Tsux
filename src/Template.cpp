@@ -39,7 +39,7 @@ void Template::compile(){
       if(c == '{'){
         if(tmp.size() > 0){
           //add new plain data to the flux
-          flux.push_back(new TemplatePart(tmp));
+          flux.push_back(new TemplatePart(this, tmp));
           tmp.clear();
         }
 
@@ -55,7 +55,7 @@ void Template::compile(){
           tmp += '{';
 
         if(tmp.size() > 0)
-          flux.push_back(new TemplatePart(tmp));
+          flux.push_back(new TemplatePart(this, tmp));
       }
     }
     else if(mode == PREVAR){
@@ -86,9 +86,9 @@ void Template::compile(){
         else{
           //check if a translation is possible
           if(translator != NULL && translator->hasTrans(tmp))
-            flux.push_back(new TemplatePart(translator, tmp));
+            flux.push_back(new TemplatePart(this, translator, tmp));
           else //add parameter
-            flux.push_back(new TemplatePart(""));
+            flux.push_back(new TemplatePart(this));
 
           params.insert(std::pair<std::string, unsigned int>(tmp, flux.size()-1));
         }
@@ -107,17 +107,44 @@ void Template::compile(){
   }
 }
 
-void Template::render(Tsux& tsux){
+
+void Template::herit(Template& tpl){
+  //link empty parts to parent's parts if they exists
   for(int i = 0; i < flux.size(); i++){
-    if(flux[i]->type == TemplatePart::PLAIN)
-      tsux.response << flux[i]->plain;
-    else if(flux[i]->type == TemplatePart::POINTER)
-      tsux.response << (*(flux[i]->pointer));
-    else if(flux[i]->type == TemplatePart::TRANSLATION)
-      tsux.response << translator->trans(flux[i]->plain);
-    else if(flux[i]->type == TemplatePart::ACTION)
-      flux[i]->action.execute(tsux);
+    if(flux[i]->type == TemplatePart::EMPTY){
+      //resolve part name
+      std::string identifier = getIdentifier(flux[i]);
+      
+      //search in template
+      TemplatePart* part = tpl.get(identifier);
+      if(part != NULL){
+        //create a link
+        flux[i]->type = TemplatePart::LINK;
+        flux[i]->link = part;
+      }
+    }
   }
+}
+
+void Template::render(Tsux& tsux){
+  for(int i = 0; i < flux.size(); i++)
+    render(tsux, flux[i]);
+}
+
+
+void Template::render(Tsux& tsux, TemplatePart* part){
+  if(part->type == TemplatePart::PLAIN)
+    tsux.response << part->plain;
+  else if(part->type == TemplatePart::POINTER)
+    tsux.response << (*(part->pointer));
+  else if(part->type == TemplatePart::TRANSLATION)
+    tsux.response << translator->trans(part->plain);
+  else if(part->type == TemplatePart::ACTION)
+    part->action.execute(tsux);
+  else if(part->type == TemplatePart::TEMPLATE)
+    part->tpl->render(tsux);
+  else if(part->type == TemplatePart::LINK)
+    part->link->parent->render(tsux, part->link);
 }
 
 void Template::set(const std::string& name, const std::string& data){
@@ -144,12 +171,42 @@ void Template::set(const std::string& name, TsuxAction act, void* data){
   }
 }
 
-void Template::set(const std::string& name, Template *tpl){
+void Template::set(const std::string& name, Template& tpl){
   std::map<std::string, unsigned int>::iterator it = params.find(name);
   if(it != params.end()){
     flux[it->second]->type = TemplatePart::TEMPLATE;
-    flux[it->second]->tpl = tpl;
+    flux[it->second]->tpl = &tpl;
   }
+}
+
+
+TemplatePart* Template::get(const std::string& name){
+  std::map<std::string, unsigned int>::iterator it = params.find(name);
+  if(it != params.end())
+    return flux[params.find(name)->second];
+  else
+    return NULL;
+}
+
+
+std::string Template::getIdentifier(TemplatePart* part){
+  /* resolve part name */
+
+  //search same part
+  for(int i = 0; i < flux.size(); i++){
+    if(flux[i] == part){
+      //search index correspondance
+      std::map<std::string, unsigned int>::iterator it = params.begin();
+      while(it != params.end()){
+        if(it->second == i)
+          return it->first;
+
+        it++;
+      }
+    }
+  }
+
+  return "";
 }
 
 bool Template::loadFromFile(const std::string& path){
