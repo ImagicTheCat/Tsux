@@ -76,6 +76,15 @@ class Module{
       tsux.bind(path, Action((ModAction)action, this));
     }
 
+    //bind codes
+    template<typename T> void bindCode(int code, void (T::*action)(void)){
+      tsux.bindCode(code, Action((ModAction)action, this));
+    }
+
+    void bindCode(int code, TsuxAction func, void *data = NULL){ tsux.bindCode(code, func, data); }
+
+
+
     Tsux& tsux;
 
   private:

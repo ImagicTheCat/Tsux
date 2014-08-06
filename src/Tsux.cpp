@@ -28,6 +28,9 @@ Tsux::Tsux():in(std::cin.rdbuf()),
 
   MIMEType::init();
   ssid_alpha = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+  //default codes
+  bindCode(404, default_404);
 }
 
 Tsux::~Tsux(){
@@ -746,22 +749,42 @@ void Tsux::checkSessions(){
   }
 }
 
-void Tsux::generate(int code){
-  switch(code){
-    case 404:
-      header.set("Content-type", "text/html");
-      header.set("Status", "404 Not Found");
+void Tsux::bindCode(int code, TsuxAction func, void *data){
+  std::map<int, Action>::iterator it = codes.find(code);
+  if(it != codes.end())
+    codes.erase(it);
 
-      response << "<!DOCTYPE html>"
-               << "<html>"
-               << "<head><title>404 Not Found</title></head>"
-               << "<body>"
-               << "<div style=\"margin-top: 30px; text-align: center; border-bottom: 1px solid black;\">"
-               << "<h1>404 Not Found</h1>"
-               << "<p>Cruel, cruel cruel cruel.</p>"
-               << "</div></body></html>";
-    break;
-  }
+  codes.insert(std::pair<int, Action>(code, Action(func, data)));
+}
+
+
+void Tsux::bindCode(int code, const Action& action){
+  std::map<int, Action>::iterator it = codes.find(code);
+  if(it != codes.end())
+    codes.erase(it);
+
+  codes.insert(std::pair<int, Action>(code, action));
+}
+
+
+void Tsux::generate(int code){
+  std::map<int, Action>::iterator it = codes.find(code);
+  if(it != codes.end())
+    it->second.execute(*this);
+}
+
+void Tsux::default_404(Tsux& tsux, void *data){
+  tsux.header.set("Content-type", "text/html");
+  tsux.header.set("Status", "404 Not Found");
+
+  tsux.response << "<!DOCTYPE html>"
+           << "<html>"
+           << "<head><title>404 Not Found</title></head>"
+           << "<body>"
+           << "<div style=\"margin-top: 30px; text-align: center; border-bottom: 1px solid black;\">"
+           << "<h1>404 Not Found</h1>"
+           << "<p>Cruel, cruel cruel cruel.</p>"
+           << "</div></body></html>";
 }
 
 

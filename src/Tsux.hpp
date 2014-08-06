@@ -75,6 +75,12 @@ class Tsux{
     void generate(ParamSet set);
     void generate(FileSet set);
 
+    void bindCode(int code, TsuxAction func, void *data = NULL);
+    void bindCode(int code, const Action& action);
+
+    //defaults codes
+    static void default_404(Tsux& tsux, void *data);
+
     //options methods
     void enable(unsigned int options);
     void disable(unsigned int options);
@@ -158,6 +164,9 @@ class Tsux{
     std::vector<Regex*> regs;
     std::vector<Action> actions;
     int route_locked;
+
+    //code generations
+    std::map<int, Action> codes;
 
     unsigned int session_time;
 
