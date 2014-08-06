@@ -613,7 +613,7 @@ void MyModule::myroute(){
 ```
 
 #### ParamSet and FileSet
-To debug your code, you can print ParamSet and FileSet to html.
+To debug your code, you can print `ParamSet` and `FileSet` structures to html.
 
 ##### Example
 ```cpp
