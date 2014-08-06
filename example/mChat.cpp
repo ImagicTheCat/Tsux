@@ -15,17 +15,18 @@ mChat::mChat(Tsux& tsux):
 
     //templates
     t_index.loadFromFile("chat/templates/index.html.tpl");
-    t_index.compile(main->translator());
+    t_index.compile();
 
-    t_index.set("header", &mMain::v_header, main);
-    t_index.set("footer", &mMain::v_footer, main);
+    t_index.herit(main->t_index);
     t_index.set("chat", &mChat::v_chat, this);
 
     t_login.loadFromFile("chat/templates/login.html.tpl");
-    t_login.compile(main->translator());
+    t_login.compile();
+    t_login.herit(t_index);
 
     t_chat.loadFromFile("chat/templates/chat.html.tpl");
-    t_chat.compile(main->translator());
+    t_chat.compile();
+    t_chat.herit(t_index);
 }
 
 /* ROUTES */

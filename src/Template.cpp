@@ -122,6 +122,17 @@ void Template::herit(Template& tpl){
         flux[i]->type = TemplatePart::LINK;
         flux[i]->link = part;
       }
+      else{
+        //search for parent translation
+        Translator* translator = tpl.getTranslator();
+        if(translator != NULL && translator->hasTrans(identifier)){
+          flux[i]->type = TemplatePart::TRANSLATION;
+          flux[i]->plain = identifier;
+
+          //set parent for translation
+          flux[i]->parent = &tpl;
+        }
+      }
     }
   }
 }
@@ -138,7 +149,7 @@ void Template::render(Tsux& tsux, TemplatePart* part){
   else if(part->type == TemplatePart::POINTER)
     tsux.response << (*(part->pointer));
   else if(part->type == TemplatePart::TRANSLATION)
-    tsux.response << translator->trans(part->plain);
+    tsux.response << part->parent->getTranslator()->trans(part->plain);
   else if(part->type == TemplatePart::ACTION)
     part->action.execute(tsux);
   else if(part->type == TemplatePart::TEMPLATE)

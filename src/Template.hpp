@@ -75,6 +75,8 @@ class Template{
     //load file into the data string
     bool loadFromFile(const std::string& path);
 
+    Translator* getTranslator(){ return translator; }
+
     //set variables for rendering (need a compilation before using)
     void set(const std::string& name, const std::string& data);
     void set(const std::string& name, std::string* data);

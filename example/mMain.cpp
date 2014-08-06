@@ -23,8 +23,8 @@ mMain::mMain(Tsux& tsux) :
 
   t_index.loadFromFile("main/templates/index.html.tpl");
   t_index.compile(tr);
-  t_index.set("header", &mMain::v_header, this);
-  t_index.set("footer", &mMain::v_footer, this);
+  t_index.set("header", t_header);
+  t_index.set("footer", t_footer);
 
   t_menu_el.loadFromFile("main/templates/menu_el.html.tpl");
   t_menu_el.compile(tr);
@@ -43,6 +43,9 @@ mMain::mMain(Tsux& tsux) :
     File& file = files.alloc(filepath);
     file.loadFromFile(list[i]);
   }
+
+  //custom codes
+  //bindCode(404, &mMain::v_404);
 }
 
 /* ROUTES */
@@ -78,13 +81,11 @@ void mMain::s_locale(){
 
 /* GENERATIONS */
 
-void mMain::v_header(){
-  t_header.render(tsux);
-}
+void mMain::v_404(){
+  header.set("Content-Type", "text/html");
+  header.set("Status", "404 Not Found");
 
-
-void mMain::v_footer(){
-  t_footer.render(tsux);
+  response << "Custom 404 page";
 }
 
 void mMain::v_menu(){
