@@ -18,6 +18,7 @@
   * [Sessions](#sessions-)
   * [Template](#template-)
   * [Translator](#translator-)
+  * [Generations](#generations-)
   * [Miscellaneous](#miscellaneous-)
 * [About](#about-)
 
@@ -562,6 +563,31 @@ In the template
   {{index.content.msg}}
   <br />{{index.content.msg2}}
 </body>
+```
+
+### Generations [&uarr;](#table-of-content)
+
+#### Custom error pages
+
+You can custom any error code page like a route.
+
+```cpp
+//in a module
+bindCode(404, &MyModule::my404);
+
+//or with a global tsux function
+tsux.bindCode(404, my404, mydata);
+```
+
+Function example : 
+
+```cpp
+void MyModule::my404(){
+  header.set("Content-Type", "text/html");
+  header.set("Status", "404 Not Found");
+
+  response << "My 404 custom page.";
+}
 ```
 
 ### Miscellaneous [&uarr;](#table-of-content)
