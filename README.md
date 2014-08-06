@@ -486,7 +486,7 @@ tpl.render(tsux);
   tpl.herit(another_tpl);
 ```
 
-The template will herit of the possibles translations given by the parent translator and all identifiers. Multiple heritances possible.
+The template will herit of the possibles translations given by the parent's translator and all the identifiers. Multiple heritances possible.
 
 #### Template notation
 
@@ -590,7 +590,7 @@ bindCode(404, &MyModule::my404);
 tsux.bindCode(404, my404, mydata);
 ```
 
-Function example : 
+##### 404 example
 
 ```cpp
 void MyModule::my404(){
@@ -601,7 +601,7 @@ void MyModule::my404(){
 }
 ```
 
-Generate :
+##### Generate
 
 ```cpp
 void MyModule::myroute(){
@@ -609,6 +609,27 @@ void MyModule::myroute(){
     generate(404); //or 403
   else 
     response << "hi admin !";
+}
+```
+
+#### ParamSet and FileSet
+To debug your code, you can print ParamSet and FileSet to html.
+
+##### Example
+```cpp
+void MyModule::debug(){
+  reponse << "POST\n";
+  generate(post);
+  reponse << "GET\n";
+  generate(get);
+  reponse << "HEADER\n";
+  generate(header);
+  reponse << "PARAM\n";
+  generate(param);
+  reponse << "FILE\n";
+  generate(file);
+  reponse << "ROUTE\n";
+  generate(route);
 }
 ```
 
