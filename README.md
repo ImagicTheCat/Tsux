@@ -618,17 +618,17 @@ To debug your code, you can print `ParamSet` and `FileSet` structures to html.
 ##### Example
 ```cpp
 void MyModule::debug(){
-  reponse << "POST\n";
+  response << "POST\n";
   generate(post);
-  reponse << "GET\n";
+  response << "GET\n";
   generate(get);
-  reponse << "HEADER\n";
+  response << "HEADER\n";
   generate(header);
-  reponse << "PARAM\n";
+  response << "PARAM\n";
   generate(param);
-  reponse << "FILE\n";
+  response << "FILE\n";
   generate(file);
-  reponse << "ROUTE\n";
+  response << "ROUTE\n";
   generate(route);
 }
 ```
