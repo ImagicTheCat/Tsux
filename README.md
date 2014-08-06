@@ -44,6 +44,7 @@ Tsux is based on [FastCGI](http://www.fastcgi.com) (especially libfcgi and libfc
 * base encoder/decoder
 * a translator system
 * a session system
+* customization of error pages internally
 
 Tsux don't have the goal to implement current web technologies, but to let you the capacity to build simple website in C++.
 
@@ -64,6 +65,7 @@ For the moment, Tsux don't have version or package.
 Compile :
 ```bash
 $ git clone https://github.com/ImagicTheCat/Tsux
+$ cd Tsux
 $ make
 ```
 
