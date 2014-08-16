@@ -21,6 +21,7 @@
 #include "URI.hpp"
 #include "FileSet.hpp"
 #include "MIMEType.hpp"
+#include "HTML.hpp"
 #include "Base.hpp"
 
 

@@ -26,6 +26,8 @@ Tsux::Tsux():in(std::cin.rdbuf()),
   FCGX_InitRequest(&request, 0,0);
 
   MIMEType::init();
+  HTML::init();
+
   ssid_alpha = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
   //default codes

@@ -696,6 +696,12 @@ std::string encoded = URI::encode(uri);
 std::string decoded = URI::decode(encoded);
 ```
 
+#### HTML tools
+```cpp
+std::string html = "<b>bold</b>";
+std::string safe_text = HTML::entities(html);
+```
+
 #### Dir tools
 ```cpp
 #include <tsux/Dir.hpp> 
