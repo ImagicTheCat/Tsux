@@ -16,6 +16,9 @@ class URI{
     static std::string encode(const std::string& str);
     static std::string decode(const std::string& str);
 
+    //encode a string in a human readable format for uri
+    static std::string slugify(const std::string& str);
+
     static const char HEX2DEC[256];
     static const char SAFE[256];
 

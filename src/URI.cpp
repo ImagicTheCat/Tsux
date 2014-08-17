@@ -132,3 +132,19 @@ std::string URI::encode(const std::string& sSrc){
     return sResult;
 }
 
+
+std::string URI::slugify(const std::string& str){
+  std::string tmp;
+  for(int i = 0; i < str.size(); i++){
+    const char& c = str[i];
+
+    if(c >= 'A' && c <= 'Z')
+      tmp += 'a'+(c - 'A');
+    else if(c == '\'' || c == ' ')
+      tmp += '-';
+    else if((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'))
+      tmp += c;
+  }
+
+  return tmp;
+}

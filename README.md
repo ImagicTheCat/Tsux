@@ -694,6 +694,9 @@ tsux.createCookie("name", "", 0);
 std::string uri = "post data or uri";
 std::string encoded = URI::encode(uri);
 std::string decoded = URI::decode(encoded);
+
+std::string title = "My article title";
+std::string slug = URI::slugify(title);
 ```
 
 #### HTML tools
