@@ -673,6 +673,42 @@ void MyModule::debug(){
 
 ### Miscellaneous [&uarr;](#table-of-content)
 
+#### Paginator
+
+```cpp
+Paginator p;
+
+//maximum visible pages in pagination
+p.setVisiblePages(10);
+
+//maximum elements per page
+p.setElementsPerPage(20);
+
+//change elements size
+p.size(1000);
+
+//begin at fist page
+p.page(1);
+
+//get pages size number
+p.pages();
+
+//get a range of current page elements
+p.a(); //first index (begin at 0)
+p.b(); //last index
+
+//get elements size for the current page
+p.n();
+
+//get the main template for rendering pagination
+mytpl.set("pagination", p.tpl());
+
+//render directly
+p.render(tsux);
+```
+
+Pagination customization soon.
+
 #### Cookies
 
 Create a cookie
