@@ -1,5 +1,5 @@
 OPT=-Wall -shared -fPIC -g
-OBJ=Tsux.o ParamSet.o FileSet.o Action.o Regex.o URI.o Dir.o MIMEType.o Module.o Template.o Base.o Translator.o Config.o HTML.o
+OBJ=Tsux.o ParamSet.o FileSet.o Action.o Regex.o URI.o Dir.o MIMEType.o Module.o Template.o Base.o Translator.o Config.o HTML.o Paginator.o
 TARGET=libtsux.so
 
 all: $(OBJ)
@@ -54,6 +54,10 @@ Translator.o: src/Translator.cpp src/Translator.hpp
 
 Config.o: src/Config.cpp src/Config.hpp
 	g++ -c src/Config.cpp $(OPT)
+
+Paginator.o: src/Paginator.cpp src/Paginator.hpp
+	g++ -c src/Paginator.cpp $(OPT)
+
 
 
 

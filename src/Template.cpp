@@ -235,8 +235,8 @@ bool Template::loadFromFile(const std::string& path){
 }
 
 void Template::clear(){
+  for(std::map<std::string, unsigned int>::iterator it = params.begin(); it != params.end(); it++)
+    delete flux[it->second];
   params.clear();
-  for(int i = 0; i < flux.size(); i++)
-    delete flux[i];
   flux.clear();
 }
