@@ -13,24 +13,12 @@ Paginator::Paginator():
   _size(0), _pages(0), _page(1)
 {
   //initialize templates
-  t_main.data = "<ul class=\"paginator\">{{elements}}</ul>";
-  t_main.compile();
-  t_main.set("elements", Paginator::v_elements, (void*)this);
-
-  t_next.data = "<li><a href=\"?p={{page}}\">&rsaquo;</a></li>";
-  t_next.compile();
-
-  t_prev.data = "<li><a href=\"?p={{page}}\">&lsaquo;</a></li>";
-  t_prev.compile();
-
-  t_last.data = "<li><a href=\"?p={{page}}\">&raquo;</a></li>";
-  t_last.compile();
-
-  t_first.data = "<li><a href=\"?p={{page}}\">&laquo;</a></li>";
-  t_first.compile();
-
-  t_el.data = "<li class=\"{{class}}\"><a href=\"?p={{page}}\">{{page}}</a></li>";
-  t_el.compile();
+  htmlMain("<ul class=\"paginator\">{{elements}}</ul>");
+  htmlNext("<li><a href=\"?p={{page}}\">&rsaquo;</a></li>");
+  htmlPrev("<li><a href=\"?p={{page}}\">&lsaquo;</a></li>");
+  htmlLast("<li><a href=\"?p={{page}}\">&raquo;</a></li>");
+  htmlFirst("<li><a href=\"?p={{page}}\">&laquo;</a></li>");
+  htmlEl("<li class=\"{{class}}\"><a href=\"?p={{page}}\">{{page}}</a></li>");
 }
 
 int Paginator::a() const {
@@ -125,4 +113,42 @@ void Paginator::v_elements(Tsux& tsux, void* data){
     paginator.t_last.set("page", ss.str());
     paginator.t_last.render(tsux);
   }
+}
+
+/* CUSTOMIZATION */
+
+void Paginator::htmlFirst(const std::string& str){
+  t_first.data = str;
+  t_first.compile();
+}
+
+
+void Paginator::htmlPrev(const std::string& str){
+  t_prev.data = str;
+  t_prev.compile();
+}
+
+
+void Paginator::htmlNext(const std::string& str){
+  t_next.data = str;
+  t_next.compile();
+}
+
+
+void Paginator::htmlLast(const std::string& str){
+  t_last.data = str;
+  t_last.compile();
+}
+
+
+void Paginator::htmlEl(const std::string& str){
+  t_el.data = str;
+  t_el.compile();
+}
+
+
+void Paginator::htmlMain(const std::string& str){
+  t_main.data = str;
+  t_main.compile();
+  t_main.set("elements", Paginator::v_elements, (void*)this);
 }

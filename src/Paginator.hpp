@@ -44,6 +44,14 @@ class Paginator{
     static void v_elements(Tsux& tsux, void* data);
     Template& tpl() { return t_main; }
 
+    //customization
+    void htmlMain(const std::string& str);
+    void htmlEl(const std::string& str);
+    void htmlFirst(const std::string& str);
+    void htmlPrev(const std::string& str);
+    void htmlNext(const std::string& str);
+    void htmlLast(const std::string& str);
+
   private:
     Template t_main, t_prev, t_next, t_el, t_first, t_last;
     int per_page, visible_pages;
