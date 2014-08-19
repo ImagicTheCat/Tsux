@@ -675,6 +675,8 @@ void MyModule::debug(){
 
 #### Paginator
 
+##### Usage
+
 ```cpp
 Paginator p;
 
@@ -707,7 +709,30 @@ mytpl.set("pagination", p.tpl());
 p.render(tsux);
 ```
 
-Pagination customization soon.
+##### Customization
+
+You can customize the rendered pagination with template-like notation.
+This is the default render.
+
+```cpp
+//pagination container
+p.htmlMain("<ul class=\"paginator\">{{elements}}</ul>");
+
+//first button <<
+p.htmlFirst("<li><a href=\"?p={{page}}\">&laquo;</a></li>");
+
+//prev button <
+p.htmlPrev("<li><a href=\"?p={{page}}\">&lsaquo;</a></li>");
+
+//page button 1 2 3 ...
+p.htmlEl("<li class=\"{{class}}\"><a href=\"?p={{page}}\">{{page}}</a></li>");
+
+//next button >
+p.htmlNext("<li><a href=\"?p={{page}}\">&rsaquo;</a></li>");
+
+//last button >>
+p.htmlLast("<li><a href=\"?p={{page}}\">&raquo;</a></li>");
+```
 
 #### Cookies
 
