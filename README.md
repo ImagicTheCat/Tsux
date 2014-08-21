@@ -479,6 +479,10 @@ tpl.set("content", &MyMod::myfunc, &mymod);
 //set another template
 tpl.set("header", header_tpl);
 
+//you can set template value with any type if it can be converted into a string
+tpl.set("page", 2);
+tpl.set("time", 1.5585);
+
 //render the template
 tpl.render(tsux);
 ```
@@ -541,8 +545,12 @@ conf.loadFromFile("config/global.conf");
 if(conf.has("mysql.host"))
   std::string host = conf.get("mysql.host");
 
+//get any value type converted in string with default value
+int pages = conf.get("pages", 10);
+
 //set a value by full path
 conf.set("mysql.host", "mydomain.com");
+conf.set("mysql.threads", 5);
 ```
 
 

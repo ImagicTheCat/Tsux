@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 #include <fstream>
+#include <sstream>
 
 struct ConfigGroup{
   ~ConfigGroup();
@@ -27,6 +28,28 @@ class Config{
     const std::string& get(const std::string& path);
 
     void set(const std::string& path, const std::string& value);
+
+    //template set/get
+    template<typename T> T get(const std::string& param, const T& def) {
+      if(has(param)){
+        T val(0);
+        std::stringstream ss(get(param));
+        ss >> val;
+
+        return val;
+      }
+      else
+        return def;
+    }
+
+
+    template<typename T> void set(const std::string& param, const T& val){
+      std::stringstream ss;
+      ss << val;
+      set(param, ss.str());
+    }
+
+
 
   protected:
     void parse(const std::string& data);

@@ -96,6 +96,15 @@ class Template{
     //template
     void set(const std::string& name, Template& tpl);
 
+    //set any type converted to string
+    template<typename T> void set(const std::string& param, const T& val){
+      std::stringstream ss;
+      ss << val;
+      set(param, ss.str());
+    }
+
+
+
     //get part by name
     TemplatePart* get(const std::string& name);
 
