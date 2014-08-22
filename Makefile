@@ -1,5 +1,5 @@
 OPT=-Wall -shared -fPIC -g
-OBJ=Tsux.o ParamSet.o FileSet.o Action.o Regex.o URI.o Dir.o MIMEType.o Module.o Template.o Base.o Translator.o Config.o HTML.o Paginator.o
+OBJ=Tsux.o ParamSet.o FileSet.o Action.o Regex.o URI.o Dir.o MIMEType.o Module.o Template.o Base.o Translator.o Config.o HTML.o Paginator.o MySQL.o
 TARGET=libtsux.so
 
 all: $(OBJ)
@@ -57,6 +57,10 @@ Config.o: src/Config.cpp src/Config.hpp
 
 Paginator.o: src/Paginator.cpp src/Paginator.hpp
 	g++ -c src/Paginator.cpp $(OPT)
+
+MySQL.o: src/MySQL.cpp src/MySQL.hpp
+	g++ -c src/MySQL.cpp $(OPT)
+
 
 
 
