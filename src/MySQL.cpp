@@ -43,18 +43,9 @@ void MySQL::disconnect(){
 
 void MySQL::bindQueries(){
   if(con != NULL){
-    //normal query
-    if(stmt != NULL)
-      delete stmt;
-    stmt = con->createStatement();
+    if(stmt == NULL)
+      stmt = con->createStatement();
     _use();
-
-    //prepared queries
-    std::map<std::string, Query>::iterator it;
-    for(it = queries.begin(); it != queries.end(); it++){
-      delete it->second.p;
-      it->second.p = con->prepareStatement(it->second.string);
-    }
   }
 }
 
@@ -74,7 +65,7 @@ bool MySQL::connect(){
     delete con;
   }
 
-  std::cout << "reconnect" << std::endl;
+  std::cout << "connect" << std::endl;
   con = driver->connect(host, user, password);
 
   std::cout << "bind queries" << std::endl;
@@ -152,10 +143,8 @@ Query& MySQL::get(const std::string& name){
 
 
 void MySQL::handleException(sql::SQLException& e){
-  //prevent infinite loop with database selection
-  if(e.getErrorCode() != 1049){
-    connect();
-  }
+  std::cout << "[tsux] exception: " << e.what() << std::endl;
+  connect();
 }
 
 /* QUERY */
