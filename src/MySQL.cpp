@@ -21,8 +21,7 @@ void MySQL::clear(){
   disconnect();
 
   if(con != NULL)
-    delete con;
-  if(stmt != NULL)
+    delete con; if(stmt != NULL)
     delete stmt;
 
   con = NULL;
@@ -43,9 +42,21 @@ void MySQL::disconnect(){
 
 void MySQL::bindQueries(){
   if(con != NULL){
-    if(stmt == NULL)
-      stmt = con->createStatement();
+    if(stmt != NULL)
+      delete stmt;
+    //recreate stmt
+    stmt = con->createStatement();
     _use();
+
+    //recreate prepared statements
+    std::map<std::string, Query>::iterator it;
+    for(it = queries.begin(); it != queries.end(); it++){
+      delete it->second.p;
+      it->second.p = con->prepareStatement(it->second.string);
+
+      //bind params
+      it->second.bindParams();
+    }
   }
 }
 
@@ -150,6 +161,9 @@ void MySQL::handleException(sql::SQLException& e){
 /* QUERY */
 sql::ResultSet* Query::executeQuery(){
   if(p != NULL){
+    if(!bind_done)
+      bindParams();
+
     try{
       return p->executeQuery();
     }catch(sql::SQLException e){
@@ -163,6 +177,9 @@ sql::ResultSet* Query::executeQuery(){
 
 bool Query::execute(){
   if(p != NULL){
+    if(!bind_done)
+      bindParams();
+
     try{
       return p->execute();
     }catch(sql::SQLException e){
@@ -173,4 +190,69 @@ bool Query::execute(){
 
   return false;
 }
+
+void Query::bindParams(){
+  if(p != NULL){
+    for(int i = 1; i <= param_size; i++){
+      if(bigints.find(i) != bigints.end())
+        p->setBigInt(i, bigints.find(i)->second);   
+      else if(blobs.find(i) != blobs.end())
+        p->setBlob(i, blobs.find(i)->second);   
+      else if(booleans.find(i) != booleans.end())
+        p->setBoolean(i, booleans.find(i)->second);   
+      else if(datetimes.find(i) != datetimes.end())
+        p->setDateTime(i, datetimes.find(i)->second);   
+      else if(doubles.find(i) != doubles.end())
+        p->setDouble(i, doubles.find(i)->second);   
+      else if(ints.find(i) != ints.end())
+        p->setInt(i, ints.find(i)->second);   
+      else if(uints.find(i) != uints.end())
+        p->setUInt(i, uints.find(i)->second);   
+      else if(ints64.find(i) != ints64.end())
+        p->setInt64(i, ints64.find(i)->second);   
+      else if(uints64.find(i) != uints64.end())
+        p->setUInt64(i, uints64.find(i)->second);   
+      else if(nulls.find(i) != nulls.end())
+        p->setNull(i, nulls.find(i)->second);   
+      else if(strings.find(i) != strings.end())
+        p->setString(i, strings.find(i)->second);   
+    }
+
+    bind_done = true;
+  }
+}
+
+//params set
+void Query::setBigInt(unsigned int index, const sql::SQLString& v)
+{ set(index, v, bigints); }
+
+void Query::setBlob(unsigned int index, std::istream * v)
+{ set(index, v, blobs); }
+
+void Query::setBoolean(unsigned int index, bool v)
+{ set(index, v, booleans); }
+
+void Query::setDateTime(unsigned int index, const sql::SQLString& v)
+{ set(index, v, datetimes); }
+
+void Query::setDouble(unsigned int index, double v)
+{ set(index, v, doubles); }
+
+void Query::setInt(unsigned int index, int32_t v)
+{ set(index, v, ints); }
+
+void Query::setUInt(unsigned int index, uint32_t v)
+{ set(index, v, uints); }
+
+void Query::setInt64(unsigned int index, int64_t v)
+{ set(index, v, ints64); }
+
+void Query::setUInt64(unsigned int index, uint64_t v)
+{ set(index, v, uints64); }
+
+void Query::setNull(unsigned int index, int v)
+{ set(index, v, nulls); }
+
+void Query::setString(unsigned int index, const sql::SQLString& v)
+{ set(index, v, strings); }
 

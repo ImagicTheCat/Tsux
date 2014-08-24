@@ -18,7 +18,7 @@
 class MySQL;
 
 struct Query{
-  Query():p(NULL), mysql(NULL){}
+  Query():p(NULL), mysql(NULL), param_size(0), bind_done(true){}
   sql::PreparedStatement *p;
   MySQL* mysql;
   std::string string;
@@ -26,6 +26,70 @@ struct Query{
   sql::ResultSet* executeQuery();
   bool execute();
   sql::PreparedStatement& query(){ return *p; }
+
+  //params
+  void setBigInt(unsigned int parameterIndex, const sql::SQLString& value);
+	void setBlob(unsigned int parameterIndex, std::istream * blob);
+	void setBoolean(unsigned int parameterIndex, bool value);
+	void setDateTime(unsigned int parameterIndex, const sql::SQLString& value);
+	void setDouble(unsigned int parameterIndex, double value);
+	void setInt(unsigned int parameterIndex, int32_t value);
+	void setUInt(unsigned int parameterIndex, uint32_t value);
+	void setInt64(unsigned int parameterIndex, int64_t value);
+	void setUInt64(unsigned int parameterIndex, uint64_t value);
+	void setNull(unsigned int parameterIndex, int sqlType);
+	void setString(unsigned int parameterIndex, const sql::SQLString& value);
+
+  std::map<unsigned int, sql::SQLString> bigints;
+  std::map<unsigned int, std::istream*> blobs;
+  std::map<unsigned int, bool> booleans;
+  std::map<unsigned int, sql::SQLString> datetimes;
+  std::map<unsigned int, double> doubles;
+  std::map<unsigned int, int32_t> ints;
+  std::map<unsigned int, uint32_t> uints;
+  std::map<unsigned int, int64_t> ints64;
+  std::map<unsigned int, uint64_t> uints64;
+  std::map<unsigned int, int> nulls;
+  std::map<unsigned int, sql::SQLString> strings;
+
+  //set shortcut
+  template<typename T> void set(unsigned int index, const T& v, std::map<unsigned int, T>& map){
+    if(index > param_size)
+      param_size = index;
+
+    if(bind_done)
+      bind_done = false;
+
+    set_unset(index, map, bigints);
+    set_unset(index, map, blobs);
+    set_unset(index, map, booleans);
+    set_unset(index, map, datetimes);
+    set_unset(index, map, doubles);
+    set_unset(index, map, ints);
+    set_unset(index, map, uints);
+    set_unset(index, map, ints64);
+    set_unset(index, map, uints64);
+    set_unset(index, map, nulls);
+    set_unset(index, map, strings);
+
+    typename std::map<unsigned int, T>::iterator it = map.find(index);
+    if(it != map.end())
+      map.erase(it);
+    map.insert(std::pair<unsigned int, T>(index, v));
+  }
+
+  //set unset shortcut
+  template<typename U,typename V> void set_unset(unsigned int index, std::map<unsigned int, U>& current_map, std::map<unsigned int, V>& map){
+    typename std::map<unsigned int, V>::iterator it;
+    if((void*)&current_map != (void*)&map && (it = map.find(index)) != map.end())
+      map.erase(it);
+  }
+
+  //bind params to prepared statement
+  void bindParams();
+
+  int param_size;
+  bool bind_done;
 };
 
 class MySQL{
