@@ -76,10 +76,8 @@ bool MySQL::connect(){
     delete con;
   }
 
-  std::cout << "connect" << std::endl;
   con = driver->connect(host, user, password);
 
-  std::cout << "bind queries" << std::endl;
   bindQueries();
 
   return !con->isClosed();
@@ -102,7 +100,6 @@ sql::ResultSet* MySQL::executeQuery(const std::string& query){
 bool MySQL::execute(const std::string& query){
   if(stmt != NULL){
     try{
-      std::cout << "try: " << query << std::endl;
       return stmt->execute(query);
     }catch(sql::SQLException e){
       handleException(e);
