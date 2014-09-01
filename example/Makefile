@@ -1,4 +1,4 @@
-LIB=-ltsux -lfcgi -lfcgi++
+LIB=-ltsux -lfcgi -lfcgi++ -lmysqlcppconn
 OPT=
 
 run: main.o mMain.o mChat.o

@@ -43,7 +43,7 @@ HTML.o: src/HTML.cpp src/HTML.hpp
 Module.o: src/Module.cpp src/Module.hpp
 	g++ -c src/Module.cpp $(OPT)
 
-Template.o: src/Template.cpp src/Template.hpp
+Template.o: src/Template.cpp src/Template.hpp 
 	g++ -c src/Template.cpp $(OPT)
 
 Base.o: src/Base.cpp src/Base.hpp

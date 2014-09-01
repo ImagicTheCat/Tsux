@@ -14,6 +14,7 @@ class mMain : public Module{
     void r_index();
     void r_info();
     void r_404();
+    void r_base();
 
     //super routes
     void s_locale();
@@ -35,6 +36,9 @@ class mMain : public Module{
 
     //templates
     Template t_header, t_footer, t_menu_el, t_404;
+
+    //test
+    Template t_base;
 };
 
 #endif

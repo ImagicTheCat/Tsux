@@ -30,10 +30,17 @@ void Template::compile(){
 
   int mode = NONE;
 
+  //check the begin/end brackets
+  int be_count = 0;
+
   std::string tmp;
 
   for(int i = 0; i < data.size(); i++){
     char& c = data[i];
+    if(c == '{')
+      be_count++;
+    else if(c == '}')
+      be_count--;
     
     if(mode == NONE){
       if(c == '{'){
@@ -71,21 +78,50 @@ void Template::compile(){
       }
     }
     else if(mode == VAR){
-      if(c == '}')
+      if(c == '}' && be_count == 1)
         mode = SUFVAR;
       else
         tmp += c;
     }
     else if(mode == SUFVAR){
       if(c == '}'){
-        //add var
+        //new var
+
+        //check if it's a subtemplate definition
+        std::string name;
+        std::string content;
+        bool mode_content = false;
+        for(int j = 0; j < tmp.size(); j++){
+          const char& c = tmp[j];
+          if(!mode_content){
+            if(c == '=')
+              mode_content = true;
+            else
+              name += c;
+          }
+          else
+            content += c;
+        }
+
+        tmp = name;
+
         //check existence of this parameter
         std::map<std::string, unsigned int>::iterator it = params.find(tmp);
         if(it != params.end())
           flux.push_back(flux[it->second]); //build a link
         else{
+          //subtemplate
+          if(mode_content){
+            TemplatePart* tp = new TemplatePart(this);
+            tp->type = TemplatePart::SUBTEMPLATE;
+            tp->subtpl = new Template();
+            tp->subtpl->data = content;
+            tp->subtpl->compile();
+
+            flux.push_back(tp);
+          }
           //check if a translation is possible
-          if(translator != NULL && translator->hasTrans(tmp))
+          else if(translator != NULL && translator->hasTrans(tmp))
             flux.push_back(new TemplatePart(this, translator, tmp));
           else //add parameter
             flux.push_back(new TemplatePart(this));
@@ -105,22 +141,34 @@ void Template::compile(){
       }
     }
   }
+
+  //herit from this in all subtemplates
+  for(int i = 0; i < flux.size(); i++){
+    if(flux[i]->type == TemplatePart::SUBTEMPLATE)
+      flux[i]->subtpl->herit(*this);
+  }
 }
 
 
 void Template::herit(Template& tpl){
-  //link empty parts to parent's parts if they exists
   for(int i = 0; i < flux.size(); i++){
-    if(flux[i]->type == TemplatePart::EMPTY){
+    //herit from tpl to all subtemplates
+    if(flux[i]->type == TemplatePart::SUBTEMPLATE)
+      flux[i]->subtpl->herit(tpl);
+    //link empty parts to parent's parts if they exists
+    else if(flux[i]->type == TemplatePart::EMPTY){
       //resolve part name
       std::string identifier = getIdentifier(flux[i]);
       
       //search in template
       TemplatePart* part = tpl.get(identifier);
       if(part != NULL){
-        //create a link
-        flux[i]->type = TemplatePart::LINK;
-        flux[i]->link = part;
+        //don't replace subtemplate
+        if(part->type != TemplatePart::SUBTEMPLATE){
+          //create a link
+          flux[i]->type = TemplatePart::LINK;
+          flux[i]->link = part;
+        }
       }
       else{
         //search for parent translation
@@ -156,6 +204,8 @@ void Template::render(Tsux& tsux, TemplatePart* part){
     part->tpl->render(tsux);
   else if(part->type == TemplatePart::LINK)
     part->link->parent->render(tsux, part->link);
+  else if(part->type == TemplatePart::SUBTEMPLATE)
+    part->subtpl->render(tsux);
 }
 
 void Template::set(const std::string& name, const std::string& data){

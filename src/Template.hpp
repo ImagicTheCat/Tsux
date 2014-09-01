@@ -29,17 +29,23 @@ struct TemplatePart{
     TRANSLATION = 3,
     ACTION = 4,
     TEMPLATE = 5,
-    LINK = 6
+    LINK = 6,
+    SUBTEMPLATE = 7
   };
 
-  TemplatePart(Template* p): parent(p), type(EMPTY){}
+  TemplatePart(Template* p): subtpl(NULL), parent(p), type(EMPTY){}
 
   //string and string pointer
-  TemplatePart(Template* p, const std::string& data):parent(p), type(PLAIN), plain(data){}
-  TemplatePart(Template* p, std::string* data): parent(p), type(POINTER), pointer(data){}
+  TemplatePart(Template* p, const std::string& data): subtpl(NULL),parent(p), type(PLAIN), plain(data){}
+  TemplatePart(Template* p, std::string* data): subtpl(NULL),parent(p), type(POINTER), pointer(data){}
 
   //translator
-  TemplatePart(Template* p,Translator* tr, const std::string& name): parent(p), type(TRANSLATION), plain(name){}
+  TemplatePart(Template* p,Translator* tr, const std::string& name): subtpl(NULL),parent(p), type(TRANSLATION), plain(name){}
+
+  ~TemplatePart(){
+    if(subtpl != NULL)
+      delete subtpl;
+  }
 
   Action action;
   std::string plain;
@@ -47,6 +53,8 @@ struct TemplatePart{
   Template* tpl;
   Template* parent;
   TemplatePart* link;
+  Template* subtpl;
+
   int type;
 };
 

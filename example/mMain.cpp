@@ -9,6 +9,7 @@ mMain::mMain(Tsux& tsux) :
   bind("^/$", &mMain::r_index);
   bind("^/static/(.*)$", &mMain::r_file);
   bind("^/info$", &mMain::r_info);
+  bind("^/base$", &mMain::r_base);
 
   //translations
   tr.loadFromFile("main/translations/all");
@@ -32,6 +33,11 @@ mMain::mMain(Tsux& tsux) :
   t_404.loadFromFile("main/templates/404.html.tpl");
   t_404.compile();
   t_404.herit(t_index);
+
+  //test
+  t_base.loadFromFile("main/templates/base.html.tpl");
+  t_base.compile();
+  t_base.herit(t_header);
 
   //build menu
   menu.insert(std::pair<std::string, std::string>("/","menu.index"));
@@ -79,6 +85,10 @@ void mMain::r_index(){
 
 void mMain::r_info(){
   generate(param);
+}
+
+void mMain::r_base(){
+  t_base.render(tsux);
 }
 
 /* SUPER ROUTES */
