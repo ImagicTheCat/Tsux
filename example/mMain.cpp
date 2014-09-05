@@ -39,6 +39,14 @@ mMain::mMain(Tsux& tsux) :
   t_base.compile();
   t_base.herit(t_header);
 
+  t_subbase.loadFromFile("main/templates/subbase.html.tpl");
+  t_subbase.extend(t_base);
+  t_subbase.compile();
+
+  t_subsubbase.loadFromFile("main/templates/subsubbase.html.tpl");
+  t_subsubbase.extend(t_subbase);
+  t_subsubbase.compile();
+
   //build menu
   menu.insert(std::pair<std::string, std::string>("/","menu.index"));
   menu.insert(std::pair<std::string, std::string>("/chat","menu.chat"));
@@ -88,7 +96,12 @@ void mMain::r_info(){
 }
 
 void mMain::r_base(){
-  t_base.render(tsux);
+  if(get.has("sub"))
+    t_subbase.render(tsux);
+  else if(get.has("subsub"))
+    t_subsubbase.render(tsux);
+  else
+    t_base.render(tsux);
 }
 
 /* SUPER ROUTES */

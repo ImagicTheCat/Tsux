@@ -38,7 +38,7 @@ class mMain : public Module{
     Template t_header, t_footer, t_menu_el, t_404;
 
     //test
-    Template t_base;
+    Template t_base, t_subbase, t_subsubbase;
 };
 
 #endif

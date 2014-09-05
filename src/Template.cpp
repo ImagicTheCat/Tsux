@@ -107,8 +107,13 @@ void Template::compile(){
 
         //check existence of this parameter
         std::map<std::string, unsigned int>::iterator it = params.find(tmp);
-        if(it != params.end())
-          flux.push_back(flux[it->second]); //build a link
+        if(it != params.end()){
+          //build a link template
+          TemplatePart* tp = new TemplatePart(this);
+          tp->type = TemplatePart::LINK;
+          tp->link = flux[it->second];
+          flux.push_back(tp);
+        }
         else{
           //subtemplate
           if(mode_content){
@@ -142,10 +147,61 @@ void Template::compile(){
     }
   }
 
-  //herit from this in all subtemplates
-  for(int i = 0; i < flux.size(); i++){
-    if(flux[i]->type == TemplatePart::SUBTEMPLATE)
-      flux[i]->subtpl->herit(*this);
+  if(base == NULL){
+    //herit from this in all subtemplates
+    for(int i = 0; i < flux.size(); i++){
+      if(flux[i]->type == TemplatePart::SUBTEMPLATE)
+        flux[i]->subtpl->herit(*this);
+    }
+  }
+  else{
+    //this template is an extension of another
+    //keep only the redefinitions
+    std::map<std::string, TemplatePart*> parts;
+
+    //save redefinitions
+    for(int i = flux.size()-1; i >= 0; i--){
+      if(flux[i]->type == TemplatePart::SUBTEMPLATE){
+        std::string identifier = getIdentifier(flux[i]);
+        if(base->get(identifier) != NULL){
+          //herit from base template
+          flux[i]->subtpl->herit(*base); 
+
+          //save part
+          parts.insert(std::pair<std::string, TemplatePart*>(identifier, flux[i]));
+
+          //remove from list
+          flux.erase(flux.begin()+i);
+        }
+      }
+    }
+
+    //fill flux with base flux
+    clear();
+    std::vector<TemplatePart*>& base_flux = base->getFlux();
+    for(int i = 0; i < base_flux.size(); i++){
+      TemplatePart* tp = new TemplatePart(this);
+      tp->type = TemplatePart::LINK;
+      tp->link = base_flux[i];
+      flux.push_back(tp);
+    }
+
+    //replace with new parts
+    for(std::map<std::string, TemplatePart*>::iterator it = parts.begin(); it != parts.end(); it++){
+      TemplatePart *old = base->get(it->first);
+      for(int i = 0; i < base_flux.size(); i++){
+        if(base_flux[i] == old){
+          delete flux[i];
+          flux[i] = it->second;
+          params.insert(std::pair<std::string, unsigned int>(it->first, i));
+          parts.erase(it);
+        }
+      }
+    }
+
+    //clear unused parts
+    for(std::map<std::string,TemplatePart*>::iterator it = parts.begin(); it != parts.end(); it++)
+      delete it->second;
   }
 }
 
@@ -156,19 +212,16 @@ void Template::herit(Template& tpl){
     if(flux[i]->type == TemplatePart::SUBTEMPLATE)
       flux[i]->subtpl->herit(tpl);
     //link empty parts to parent's parts if they exists
-    else if(flux[i]->type == TemplatePart::EMPTY){
+    else{
       //resolve part name
       std::string identifier = getIdentifier(flux[i]);
       
       //search in template
       TemplatePart* part = tpl.get(identifier);
       if(part != NULL){
-        //don't replace subtemplate
-        if(part->type != TemplatePart::SUBTEMPLATE){
-          //create a link
-          flux[i]->type = TemplatePart::LINK;
-          flux[i]->link = part;
-        }
+        //create a link
+        flux[i]->type = TemplatePart::LINK;
+        flux[i]->link = part;
       }
       else{
         //search for parent translation
@@ -214,6 +267,13 @@ void Template::set(const std::string& name, const std::string& data){
     flux[it->second]->type = TemplatePart::PLAIN;
     flux[it->second]->plain = data;
   }
+  else{
+    //spread set to subtemplates
+    for(it = params.begin(); it != params.end(); it++){
+      if(flux[it->second]->type == TemplatePart::SUBTEMPLATE)
+        flux[it->second]->subtpl->set(name, data);
+    }
+  }
 }
 
 void Template::set(const std::string& name, std::string* data){
@@ -221,6 +281,13 @@ void Template::set(const std::string& name, std::string* data){
   if(it != params.end()){
     flux[it->second]->type = TemplatePart::POINTER;
     flux[it->second]->pointer = data;
+  }
+  else{
+    //spread set to subtemplates
+    for(it = params.begin(); it != params.end(); it++){
+      if(flux[it->second]->type == TemplatePart::SUBTEMPLATE)
+        flux[it->second]->subtpl->set(name, data);
+    }
   }
 }
 
@@ -230,6 +297,13 @@ void Template::set(const std::string& name, TsuxAction act, void* data){
     flux[it->second]->type = TemplatePart::ACTION;
     flux[it->second]->action = Action(act, data);
   }
+  else{
+    //spread set to subtemplates
+    for(it = params.begin(); it != params.end(); it++){
+      if(flux[it->second]->type == TemplatePart::SUBTEMPLATE)
+        flux[it->second]->subtpl->set(name, act, data);
+    }
+  }
 }
 
 void Template::set(const std::string& name, Template& tpl){
@@ -237,6 +311,13 @@ void Template::set(const std::string& name, Template& tpl){
   if(it != params.end()){
     flux[it->second]->type = TemplatePart::TEMPLATE;
     flux[it->second]->tpl = &tpl;
+  }
+  else{
+    //spread set to subtemplates
+    for(it = params.begin(); it != params.end(); it++){
+      if(flux[it->second]->type == TemplatePart::SUBTEMPLATE)
+        flux[it->second]->subtpl->set(name, tpl);
+    }
   }
 }
 
@@ -285,8 +366,8 @@ bool Template::loadFromFile(const std::string& path){
 }
 
 void Template::clear(){
-  for(std::map<std::string, unsigned int>::iterator it = params.begin(); it != params.end(); it++)
-    delete flux[it->second];
+  for(int i = 0; i < flux.size(); i++)
+    delete flux[i];
   params.clear();
   flux.clear();
 }

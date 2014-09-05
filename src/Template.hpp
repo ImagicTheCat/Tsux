@@ -60,8 +60,12 @@ struct TemplatePart{
 
 class Template{
   public:
-    Template():translator(NULL){}
+    Template():translator(NULL), base(NULL){}
     ~Template();
+
+    //extend from a base template
+    //change the flux behaviour of the template
+    void extend(Template& tpl){ base = &tpl; }
 
     //compile the data string into a template flux
     void compile();
@@ -99,6 +103,13 @@ class Template{
         flux[it->second]->type = TemplatePart::ACTION;
         flux[it->second]->action = Action((ModAction)act, module);
       }
+      else{
+        //spread set to subtemplates
+        for(it = params.begin(); it != params.end(); it++){
+          if(flux[it->second]->type == TemplatePart::SUBTEMPLATE)
+            flux[it->second]->subtpl->set(name, act, module);
+        }
+      }
     }
 
     //template
@@ -119,6 +130,8 @@ class Template{
     //resolve part name by part pointer
     std::string getIdentifier(TemplatePart* part);
 
+    std::vector<TemplatePart*>& getFlux(){ return flux; }
+
     std::string data;
 
   private:
@@ -130,6 +143,9 @@ class Template{
 
     //translator
     Translator* translator;
+
+    //base template
+    Template* base;
 };
 
 #endif
